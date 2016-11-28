@@ -1,0 +1,36 @@
+ACTION DEFAULTS
+&include "listact.inc"
+END
+
+LAYOUT(VERSION="1.03",TEXT="Column selection")
+TABLE (UNHIDABLECOLUMNS,UNMOVABLECOLUMNS,UNSORTABLECOLUMNS,STYLE="list1")
+{
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+[sel|col                       |typ                     ]
+}
+END
+END
+
+ATTRIBUTES
+CHECKBOX sel = FORMONLY.selected,
+               TITLE = "Sel",
+               NOT NULL, REQUIRED,
+               COMMENT = "Selection checkbox";
+LABEL col    = FORMONLY.colname,
+               TITLE = "Column name";
+LABEL typ    = FORMONLY.coltype,
+               TITLE = "Column type";
+END
+
+INSTRUCTIONS
+SCREEN RECORD sa( formonly.* );
+END
+

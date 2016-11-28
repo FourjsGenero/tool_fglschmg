@@ -1,0 +1,5 @@
+   ACTION append(TEXT="Append",IMAGE="listadd",ACCELERATOR=Control-A)
+   ACTION insert(TEXT="Insert",IMAGE="listins",ACCELERATOR=Control-N)
+   ACTION delete(TEXT="Delete",IMAGE="listdel",ACCELERATOR=Control-D)
+   ACTION close_dialog(TEXT="Close",ACCELERATOR=Return,ACCELERATOR2=Enter)
+   ACTION help(TEXT="Help",IMAGE="quest",COMMENT="Show help",ACCELERATOR=F1)

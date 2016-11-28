@@ -1,0 +1,41 @@
+LAYOUT(VERSION="1.00",TEXT="Database schema information")
+GRID
+{
+ Schema name:         [snm                                       ]
+ Owner:               [sow                                       ]
+ Version:             [svr                                       ]
+ Revision:            [srv                                       ]
+ Quoted identifiers:  [sqi                                       ]
+ Creation date:       [dsc                                       ]
+ Modification date:   [dsm                                       ]
+ Comments:
+[cmt                                                             ]
+[                                                                ]
+[                                                                ]
+[                                                                ]
+[                                                                ]
+
+}
+END
+END
+
+ATTRIBUTES
+EDIT snm      = FORMONLY.schname, NOT NULL, REQUIRED,
+                COMMENT="Schema name";
+EDIT sow      = FORMONLY.schowner, NOT NULL, REQUIRED,
+                COMMENT="Owner of the database objects";
+EDIT svr      = FORMONLY.schversion, NOT NULL, REQUIRED,
+                COMMENT="Version string of the schema, for example, 1.3";
+EDIT srv      = FORMONLY.schrevision, NOENTRY, COLOR = BLUE,
+                COMMENT="Revision version of the schema, autoamtically incremented before save";
+CHECKBOX sqi  = FORMONLY.schquotedids, NOT NULL, REQUIRED,
+                TEXT="Quoted identifiers", VALUECHECKED="y", VALUEUNCHECKED="n",
+                COMMENT="Defines if database object names are case sensitive";
+EDIT dsc      = FORMONLY.schcreat, NOENTRY, COLOR = BLUE,
+                COMMENT="Creation date of the schema";
+EDIT dsm      = FORMONLY.schmodif, NOENTRY, COLOR = BLUE,
+                COMMENT="Modification date of the schema";
+TEXTEDIT cmt  = FORMONLY.schcomment,
+                COMMENT="Free text to describe the schema";
+END
+

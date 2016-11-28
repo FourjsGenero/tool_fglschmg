@@ -1,0 +1,72 @@
+ACTION DEFAULTS
+   ACTION cancel     (TEXT="Cancel",CONTEXTMENU=NO,
+                      COMMENT="Return to previous window")
+   ACTION create_dir (IMAGE="dircrea",CONTEXTMENU=NO,
+                      COMMENT="Create a new directory from current",
+                      ACCELERATOR=Control-N)
+   ACTION delete_dir (IMAGE="dirdele",CONTEXTMENU=NO,
+                      COMMENT="Delete current directory",
+                      ACCELERATOR=Control-D,ACCELERATOR=Suppr)
+   ACTION delete_file(IMAGE="filedele",CONTEXTMENU=NO,
+                      COMMENT="Delete current file",
+                      ACCELERATOR=Control-R,ACCELERATOR=Control-Suppr)
+END
+
+LAYOUT ( VERSION="1.05" )
+GRID
+{
+<g gpn                                                                   >
+[path                                                        :cd :dd :df ]
+<                                                                        >
+<tree dirs            ><table lst                                        >
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+[name                 ][ei|entry                 |esize  |emodt   |etype ]
+<                     ><                                                 >
+<g gfn                                                                   >
+[file                                                                    ]
+<                                                                        >
+[shf                                    :                :bok    :bca    ]
+}
+END
+END
+
+ATTRIBUTES
+GROUP gpn: gpn, TEXT="Path", GRIDCHILDRENINPARENT;
+GROUP gfn: gfn, TEXT="Filename", GRIDCHILDRENINPARENT;
+TEXTEDIT path = FORMONLY.currpath, STRETCH=X, SCROLLBARS=NONE, WANTNORETURNS;  --,SCROLL;
+--EDIT path = FORMONLY.currpath, STRETCH=X, SCROLL; Missing STRETCH attribute for EDIT!
+TREE dirs : dlist, PARENTIDCOLUMN=parent, IDCOLUMN=abspath,
+    EXPANDEDCOLUMN = expanded, ISNODECOLUMN = children,
+    IMAGECOLLAPSED = "folder", IMAGEEXPANDED = "open",
+    IMAGELEAF = "folder";
+EDIT name = FORMONLY.name;
+PHANTOM FORMONLY.parent;
+PHANTOM FORMONLY.abspath;
+PHANTOM FORMONLY.children;
+PHANTOM FORMONLY.expanded;
+TABLE lst : list, DOUBLECLICK = select;
+IMAGE ei = FORMONLY.eimage;
+EDIT entry = FORMONLY.entry, TITLE="Entry";
+EDIT esize = FORMONLY.esize, TITLE="Size", JUSTIFY = RIGHT;
+EDIT emodt = FORMONLY.emodt, TITLE="Modified";
+EDIT etype = FORMONLY.etype, TITLE="Type";
+BUTTON bok : opensave;
+BUTTON bca : cancel;
+BUTTON cd : create_dir;
+BUTTON dd : delete_dir;
+BUTTON df : delete_file;
+EDIT file = FORMONLY.filename, SCROLL;
+CHECKBOX shf = FORMONLY.showhidden, TEXT="Show hidden files", NOT NULL;
+END
+
+INSTRUCTIONS
+SCREEN RECORD sr1(name, parent, abspath, children, expanded);
+SCREEN RECORD sr2(eimage, entry, esize, emodt, etype);
+END
+

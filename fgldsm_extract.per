@@ -1,0 +1,59 @@
+LAYOUT(VERSION="1.00",TEXT="Extract database schema")
+GRID
+{
+<g g1                                                           >
+ Database name:    [dbn                                        ]
+ Database type:    [dbt                                        ]
+ User name:        [usr                                        ]
+ User password:    [psw                                        ]
+ Schema owner:     [dbo                                        ]
+ Conversion rules: [cvr                                        ]
+ Specific table:   [tab                                        ]
+
+<g g2                                                           >
+   [cs                       ] [st                        ]
+   [                         ] [ie                        ]
+   [                         ]
+
+}
+END
+END
+
+ATTRIBUTES
+GROUP g1      : group1, TEXT="Database parameters",
+                GRIDCHILDRENINPARENT;
+GROUP g2      : group2, TEXT="Options",
+                GRIDCHILDRENINPARENT;
+EDIT dbn      = FORMONLY.dbname,
+                NOT NULL, REQUIRED,
+                COMMENT="Database source to connect to (mandatory)";
+COMBOBOX dbt  = FORMONLY.dbdriver,
+                INITIALIZER = cmbinit_dbdrivers,
+                COMMENT="Database type (defines driver)";
+EDIT usr      = FORMONLY.username,
+                COMMENT="Database user login name";
+EDIT psw      = FORMONLY.password, INVISIBLE,
+                COMMENT="Database user password";
+EDIT dbo      = FORMONLY.dbowner,
+                NOT NULL, REQUIRED,
+                COMMENT="Owner of the database objects (mandatory)";
+EDIT cvr      = FORMONLY.cvmeth,
+                UPSHIFT;
+EDIT tab      = FORMONLY.tabname,
+                COMMENT="Enter a table name to extract a specific table only";
+RADIOGROUP cs = FORMONLY.casens,
+                NOT NULL, REQUIRED,
+                ITEMS = (
+                          ( 0, "Keep original names" ),
+                          ( 1, "Convert to upper case" ),
+                          ( 2, "Convert to lower case" )
+                        ),
+                COMMENT="Database object names conversion to uppercase or lowercase";
+CHECKBOX st   = FORMONLY.systables,
+                NOT NULL, REQUIRED,
+                TEXT="Include system tables";
+CHECKBOX ie   = FORMONLY.ignerrors,
+                NOT NULL, REQUIRED,
+                TEXT="Ignore errors";
+END
+

@@ -1,0 +1,29 @@
+ACTION DEFAULTS
+&include "listact.inc"
+END
+
+LAYOUT(VERSION="1.00",TEXT="Primary and unique keys")
+TABLE (UNHIDABLECOLUMNS,UNMOVABLEcOLUMNS,UNSORTABLECOLUMNS,STYLE="list1")
+{
+[cn                    |cl                            ]
+[cn                    |cl                            ]
+[cn                    |cl                            ]
+[cn                    |cl                            ]
+[cn                    |cl                            ]
+}
+END
+END
+
+ATTRIBUTES
+EDIT cn     = FORMONLY.constname, SCROLL,
+              TITLE = "Name",
+              COMMENT = "Constraint name";
+EDIT cl     = FORMONLY.constcols, SCROLL,
+              TITLE = "Columns",
+              COMMENT = "Columns of the connstraint key";
+END
+
+INSTRUCTIONS
+SCREEN RECORD sa(FORMONLY.*)
+END
+

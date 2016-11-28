@@ -1,0 +1,29 @@
+LAYOUT (VERSION="1.00")
+GRID
+{
+[comment                                                      ]
+[                                                             ]
+[                                                             ]
+[                                                             ]
+[l1             ][dbnm                                        ]
+[l2             ][user                                        ]
+[l3             ][pswd                                        ]
+}
+END
+END
+
+ATTRIBUTES
+LABEL comment = FORMONLY.comment;
+LABEL l1  : label_dbname,
+            TEXT = "Database name:";
+EDIT dbnm = FORMONLY.dbname,
+            NOT NULL, REQUIRED;
+LABEL l2  : label_username,
+            TEXT = "User name:";
+EDIT user = FORMONLY.username;
+LABEL l3  : label_password,
+            TEXT = "Password:";
+EDIT pswd = FORMONLY.password,
+            INVISIBLE;
+END
+

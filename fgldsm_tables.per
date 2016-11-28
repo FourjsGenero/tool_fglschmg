@@ -1,0 +1,47 @@
+ACTION DEFAULTS
+&include "listact.inc"
+   ACTION filter(TEXT="Filter",IMAGE="filter",COMMENT="Apply filter to list",ACCELERATOR=Enter,ACCELERATOR2=Return,CONTEXTMENU=NO)
+END
+
+LAYOUT(VERSION="1.00",TEXT="Tables")
+VBOX
+GRID
+{
+ Filter: [ftn                              ] [fpk                              ] [b1        ]
+}
+END
+TABLE (UNHIDABLECOLUMNS,UNMOVABLEcOLUMNS,UNSORTABLECOLUMNS)
+{
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+[tn                                    |pk               ]
+}
+END
+END
+END
+
+ATTRIBUTES
+TEXTEDIT ftn = FORMONLY.ftabname,
+               STRETCH=X, SCROLLBARS=NONE, WANTNORETURNS;
+CHECKBOX fpk = FORMONLY.fhaspkey,
+               TEXT = "With primary key";
+BUTTON b1    : filter;
+EDIT tn      = FORMONLY.tabname, SCROLL,
+               TITLE = "Name",
+               COMMENT = "Table name";
+EDIT pk      = FORMONLY.pkeyname, SCROLL,
+               TITLE = "Primary key",
+               COMMENT = "Constraint name of table primary key";
+END
+
+INSTRUCTIONS
+SCREEN RECORD sa( FORMONLY.tabname, FORMONLY.pkeyname )
+END
+

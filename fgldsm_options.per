@@ -1,0 +1,39 @@
+LAYOUT(VERSION="1.00",TEXT="Options")
+GRID
+{
+<g g1                                                           >
+ Table name:            [ntab                                  ]
+ Primary key name:      [npky                                  ]
+ Secondary key name:    [nsky                                  ]
+ Foreign key name:      [nfky                                  ]
+ Check constraint name: [nchk                                  ]
+ Column name:           [ncol                                  ]
+ Column data type:      [ctpd                                  ]
+ Column not null:       [cnnd                                  ]
+}
+END
+END
+
+ATTRIBUTES
+GROUP g1      : group1, TEXT="Creation options",
+                GRIDCHILDRENINPARENT;
+EDIT ntab     = FORMONLY.newtabname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for table names %1 is the table number";
+EDIT npky     = FORMONLY.newpkeyname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for primary key names, %1 is the table name";
+EDIT nsky     = FORMONLY.newskeyname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for secondary key names, %1 is the table name, %2 the ordinal";
+EDIT nfky     = FORMONLY.newfkeyname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for foreign key names, %1 is the table name, %2 the ordinal";
+EDIT nchk     = FORMONLY.newcheckname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for primary key names, %1 is the table name, %2 the ordinal";
+EDIT ncol     = FORMONLY.newcolname, NOT NULL, REQUIRED, SCROLL,
+                COMMENT="Format for column names %1 is the table name, %2 the ordinal";
+COMBOBOX ctpd = FORMONLY.newcoltp,  NOT NULL, REQUIRED,
+                INITIALIZER=cmbinit_cols_typenum,
+                COMMENT="Default data type";
+CHECKBOX cnnd = FORMONLY.newcolnn,  NOT NULL, REQUIRED,
+                TEXT = "With not null constraint",
+                COMMENT="Default NOT NULL constraint";
+END
+

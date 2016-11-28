@@ -1,0 +1,379 @@
+ACTION DEFAULTS
+   ACTION load(TEXT="Load",IMAGE="diropen",COMMENT="Load new schema files",CONTEXTMENU=NO,                      ACCELERATOR=Control-O)
+   ACTION save(TEXT="Save",IMAGE="disk",COMMENT="Save schema to files",CONTEXTMENU=NO,                          ACCELERATOR=Control-S)
+   ACTION saveas(TEXT="Save as",IMAGE="disk",COMMENT="Save schema to new files",CONTEXTMENU=NO,                 ACCELERATOR=Control-Shift-S)
+   ACTION close(TEXT="Close",IMAGE="quit",COMMENT="Quit the tool",CONTEXTMENU=NO,                               ACCELERATOR=Alt-F4)
+   ACTION edit_options(TEXT="Options",IMAGE="prop",COMMENT="Edit preferences",CONTEXTMENU=NO,                   ACCELERATOR=Control-E)
+   ACTION append(TEXT="Add",IMAGE="listadd",COMMENT="Add a new item to current list",CONTEXTMENU=NO,            ACCELERATOR=Control-A)
+   ACTION insert(TEXT="Ins",IMAGE="listins",COMMENT="Insert a new item to current list",CONTEXTMENU=NO,         ACCELERATOR=Control-N)
+   ACTION delete(TEXT="Del",IMAGE="listdel",COMMENT="Delete an item from current list ",CONTEXTMENU=NO,         ACCELERATOR=Control-D)
+   ACTION delall(TEXT="DAll",IMAGE="new",COMMENT="Delete all items from current list ",CONTEXTMENU=NO,          ACCELERATOR=Control-Shift-D)
+   ACTION help(TEXT="Help",IMAGE="quest",COMMENT="Show help",CONTEXTMENU=NO,                                    ACCELERATOR=F1)
+   ACTION select_table(TEXT="Select",IMAGE="find",COMMENT="Select a table from the list",CONTEXTMENU=NO,        ACCELERATOR=F2)
+   ACTION new_table(TEXT="New",IMAGE="new",COMMENT="Create a new table entry",CONTEXTMENU=NO,                   ACCELERATOR=F3)
+   ACTION copy_table(TEXT="Copy",IMAGE="copy",COMMENT="Create a clone of current table",CONTEXTMENU=NO,         ACCELERATOR=Shift-F3)
+   ACTION delete_table(TEXT="Delete",IMAGE="eraser",COMMENT="Delete current table definition",CONTEXTMENU=NO,   ACCELERATOR=F4)
+   ACTION first_table(TEXT="First",IMAGE="first",COMMENT="First table in list",CONTEXTMENU=NO,                  ACCELERATOR=Shift-F4)
+   ACTION prev_table(TEXT="Prev",IMAGE="prev",COMMENT="Previous table in list",CONTEXTMENU=NO,                  ACCELERATOR=Shift-F5)
+   ACTION next_table(TEXT="Next",IMAGE="next",COMMENT="Next table in list",CONTEXTMENU=NO,                      ACCELERATOR=Shift-F6)
+   ACTION last_table(TEXT="Last",IMAGE="last",COMMENT="Last table in list",CONTEXTMENU=NO,                      ACCELERATOR=Shift-F7)
+   ACTION extract_sql(TEXT="Extract",IMAGE="export",COMMENT="Extract schema from database",CONTEXTMENU=NO,      ACCELERATOR=Shift-F8)
+   ACTION create_sql(TEXT="SQL",IMAGE="database",COMMENT="Generate SQL creation scripts",CONTEXTMENU=NO,       ACCELERATOR=Shift-F9)
+   ACTION edit_hprms(TEXT="SProps",IMAGE="file",COMMENT="Edit schema properties",CONTEXTMENU=NO,                ACCELERATOR=Shift-F10)
+   ACTION conv_names_upper(TEXT="ToUpper",IMAGE="arrup",COMMENT="Convert all names to uppercase",CONTEXTMENU=NO)
+   ACTION conv_names_lower(TEXT="ToLower",IMAGE="arrdown",COMMENT="Convert all names to lowercase",CONTEXTMENU=NO)
+   ACTION to_check_sqltext(TEXT="Check SQL Text",IMAGE="hook",COMMENT="Check content of SQL text",CONTEXTMENU=NO)
+END
+
+TOPMENU
+  GROUP file (TEXT="File")
+    COMMAND load
+    COMMAND save
+    COMMAND saveas
+    SEPARATOR
+    COMMAND close
+  END
+  GROUP edit (TEXT="Edit")
+    COMMAND editcut
+    COMMAND editcopy
+    COMMAND editpaste
+    SEPARATOR
+    COMMAND edit_options
+  END
+  GROUP schema (TEXT="Schema")
+    COMMAND extract_sql(TEXT="Extract database schema")
+    COMMAND edit_hprms(TEXT="Edit schema properties")
+    COMMAND create_sql(TEXT="Create SQL script")
+    COMMAND conv_names_upper(TEXT="Convert names to uppercase")
+    COMMAND conv_names_lower(TEXT="Convert names to lowercase")
+    COMMAND to_check_sqltext(TEXT="Check SQL Text")
+  END
+  GROUP tables (TEXT="Tables")
+    COMMAND select_table (TEXT="Select table")
+    COMMAND new_table (TEXT="Blank table")
+    COMMAND copy_table (TEXT="Copy table")
+    COMMAND delete_table (TEXT="Delete table")
+    SEPARATOR
+    COMMAND first_table (TEXT="First table")
+    COMMAND prev_table (TEXT="Previous table")
+    COMMAND next_table (TEXT="Next table")
+    COMMAND last_table (TEXT="Last table")
+    SEPARATOR
+  END
+  GROUP help (TEXT="Help")
+    COMMAND help
+    COMMAND about (TEXT="About")
+  END
+END
+
+toolbar ( buttonTextHidden )
+  ITEM close
+  SEPARATOR
+  ITEM load
+  ITEM save
+  SEPARATOR
+  ITEM editcut
+  ITEM editcopy
+  ITEM editpaste
+  SEPARATOR
+  ITEM edit_options
+  SEPARATOR
+  ITEM extract_sql
+  ITEM edit_hprms
+  ITEM create_sql
+  SEPARATOR
+  ITEM select_table
+  ITEM first_table
+  ITEM prev_table
+  ITEM next_table
+  ITEM last_table
+  ITEM new_table
+  ITEM copy_table
+  ITEM delete_table
+  SEPARATOR
+  ITEM help
+END
+
+LAYOUT(VERSION="1.02",TEXT="Schema manager")
+VBOX
+GROUP (TEXT="Table")
+GRID
+{
+ Table:  [tb                                  ] Primary key name: [pkey                                    ]
+}
+END
+END
+
+FOLDER
+
+PAGE p1 (TEXT = "Columns")
+GRID
+{
+<t t_cols                                                                   > [c_add]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ] [c_ins]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ] [c_del]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ] [c_mup]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ] [c_mdw]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+[i |cn               |ct                        |l1    |l2    |nn|pk|dv     ]
+<                                                                           >
+}
+END -- grid
+END -- page 1
+
+PAGE p2 ( TEXT = "Unique constraints")
+GRID
+{
+<t t_skeys                                                    > [s_add]
+[sk             |skcols                                       ] [s_ins]
+[sk             |skcols                                       ] [s_del]
+[sk             |skcols                                       ]
+[sk             |skcols                                       ]
+}
+END -- grid
+END -- page 2
+
+PAGE p3 ( TEXT = "Foreign keys constraints")
+GRID
+{
+<t t_fkeys                                                                            > [f_add]
+[fk          |fkmc             |fkrt            |fkrc           |fkdr       |fkur     ] [f_ins]
+[fk          |fkmc             |fkrt            |fkrc           |fkdr       |fkur     ] [f_del]
+[fk          |fkmc             |fkrt            |fkrc           |fkdr       |fkur     ]
+[fk          |fkmc             |fkrt            |fkrc           |fkdr       |fkur     ]
+<                                                                                     >
+}
+END -- grid
+END -- page 3
+
+PAGE p4 (TEXT = "Check Constraints")
+GRID
+{
+<t t_checks                                                                  > [k_add]
+[ck            |ckcond                                                       ] [k_ins]
+[ck            |ckcond                                                       ] [k_del]
+[ck            |ckcond                                                       ]
+<                                                                            >
+}
+END -- grid
+END -- page 4
+
+PAGE p5 (TEXT = "SQL Options")
+GRID
+{
+<t t_topts                                                                   >[o_add ]
+[dbt           |sql                                                          ][o_ins ]
+[dbt           |sql                                                          ][o_del ]
+[dbt           |sql                                                          ][o_dal ]
+<g g_tosql                                                                   >
+ Database type:  [i_dbt                                                      ]
+ SQL Text:
+[i_sql                                                                       ]
+[                                                                            ]
+[                                                                            ]
+[                                                                            ]
+[                                                                            ]
+[                                                                            ]
+                                                                 [sqlchk     ]
+<                                                                            >
+}
+END -- grid
+END -- page 5
+
+END -- folder
+
+GRID
+{
+Schema file: [sn                                                              ]
+}
+END
+
+END -- vbox
+END -- layout
+
+ATTRIBUTES
+EDIT tb = FORMONLY.tabname, SCROLL, COLOR=BLUE, NOT NULL, REQUIRED,
+  COMMENT="Name of database table";
+BUTTONEDIT pkey = FORMONLY.pkeyname, SCROLL, ACTION=pkn_default, IMAGE="prop",
+  COMMENT="Name of the primary key constraint (click button to get a default name)";
+
+LABEL sn     = FORMONLY.curschema, SIZEPOLICY = DYNAMIC;
+
+-- page 1
+TABLE t_cols: UNMOVABLECOLUMNS, UNSORTABLECOLUMNS, STYLE="list1";
+BUTTON c_add: sa_cols.append;
+BUTTON c_ins: sa_cols.insert;
+BUTTON c_del: sa_cols.delete;
+BUTTON c_mup: sa_cols.move_up, IMAGE="arrup",
+  COMMENT="Move column up in list and change its position in table definition";
+BUTTON c_mdw: sa_cols.move_down, IMAGE="arrdown",
+  COMMENT="Move column down in list and change its position in table definition";
+LABEL i = FORMONLY.colindex, COLOR=RED,
+  TITLE="Pos";
+BUTTONEDIT cn = FORMONLY.colname, COLOR=BLUE,
+  TITLE="Column name",
+  UNHIDABLE, NOT NULL, REQUIRED, SCROLL,
+  ACTION=cn_default, IMAGE="prop",
+  COMMENT="Name of the table column (click button to get a default name)";
+COMBOBOX ct = FORMONLY.typenum,
+  TITLE="Data type",
+  UNHIDABLE, NOT NULL, REQUIRED,
+  INITIALIZER=cmbinit_cols_typenum,
+  COMMENT="Data type of the column";
+EDIT l1 = FORMONLY.typel1,
+  TITLE="Qualifier 1",
+  SCROLL, UNHIDABLE,
+  COMMENT="First data type qualifier (precision/length)";
+EDIT l2 = FORMONLY.typel2,
+  TITLE="Qualifier 2",
+  SCROLL, UNHIDABLE,
+  COMMENT="Second data type qualifier (scale/minsize)";
+CHECKBOX nn = FORMONLY.typenn,
+  TITLE="NN",
+  UNHIDABLE, NOT NULL, REQUIRED,
+  COMMENT="Not null constraint";
+CHECKBOX pk = FORMONLY.pkeycol,
+  TITLE="PK",
+  UNHIDABLE, NOT NULL, REQUIRED,
+  COMMENT="Primary key column";
+EDIT dv = FORMONLY.defvalue,
+  TITLE="Default",
+  SCROLL,
+  COMMENT="Expression for column default value";
+
+-- page 2
+TABLE t_skeys: UNHIDABLECOLUMNS, UNMOVABLECOLUMNS, UNSORTABLECOLUMNS, STYLE="list1";
+BUTTON s_add: sa_skeys.append;
+BUTTON s_ins: sa_skeys.insert;
+BUTTON s_del: sa_skeys.delete;
+
+BUTTONEDIT sk = FORMONLY.skeyname, COLOR = BLUE,
+  TITLE = "Constraint name",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION = skn_default, IMAGE = "prop",
+  COMMENT="Secondary key name (click button to get a default name)";
+BUTTONEDIT skcols = FORMONLY.skeycols, TITLE = "Columns",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION = skeys_edit_colset, IMAGE = "pen",
+  COMMENT="Secondary key columns";
+
+-- page 3
+TABLE t_fkeys: UNHIDABLECOLUMNS, UNMOVABLECOLUMNS, UNSORTABLECOLUMNS, STYLE="list1";
+BUTTON f_add: sa_fkeys.append;
+BUTTON f_ins: sa_fkeys.insert;
+BUTTON f_del: sa_fkeys.delete;
+
+BUTTONEDIT fk = FORMONLY.fkeyname, COLOR = BLUE,
+  TITLE = "Constraint name",
+  ACTION=fkn_default, IMAGE="prop",
+  NOT NULL, REQUIRED, SCROLL,
+  COMMENT="Foreign key name (click button to get a default name)";
+BUTTONEDIT fkmc = FORMONLY.fkeycols,
+  TITLE = "Column list",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION = fkeys_edit_colset, IMAGE = "pen",
+  COMMENT="Columns of the main table";
+BUTTONEDIT fkrt = FORMONLY.reftabname,
+  TITLE = "Reference table",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION = zoom_reftab, IMAGE = "find",
+  COMMENT="The table referenced by the foreign key";
+BUTTONEDIT fkrc = FORMONLY.refconstname,
+  TITLE = "Reference key",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION = zoom_refkey, IMAGE = "find",
+  COMMENT="Constraint name of reference table";
+COMBOBOX fkdr = FORMONLY.delrule,
+  TITLE = "Delete rule",
+  NOT NULL, REQUIRED, INITIALIZER=cmbinit_fkeys_delupd,
+  COMMENT="Delete rule for the foreign key";
+COMBOBOX fkur = FORMONLY.updrule,
+  TITLE = "Update rule",
+  NOT NULL, REQUIRED, INITIALIZER=cmbinit_fkeys_delupd,
+  COMMENT="Update rule for the foreign key";
+
+-- page 4
+TABLE t_checks: UNHIDABLECOLUMNS, UNMOVABLECOLUMNS, UNSORTABLECOLUMNS, STYLE="list1";
+BUTTON k_add: sa_checks.append;
+BUTTON k_ins: sa_checks.insert;
+BUTTON k_del: sa_checks.delete;
+
+BUTTONEDIT ck = FORMONLY.checkname, COLOR = BLUE,
+  TITLE = "Constraint name",
+  NOT NULL, REQUIRED, SCROLL,
+  ACTION=ckn_default, IMAGE="prop",
+  COMMENT="Check constraint name (click button to get a default name)";
+EDIT ckcond = FORMONLY.sqlcond,
+  TITLE = "SQL Condition",
+  NOT NULL, REQUIRED, SCROLL,
+  COMMENT="SQL condition for check constraint";
+
+-- page 5
+GROUP g_tosql: TEXT="SQL Text";
+TABLE t_topts: UNHIDABLECOLUMNS, UNMOVABLECOLUMNS, UNSORTABLECOLUMNS, STYLE="list1";
+BUTTON o_add: sa_topts.append;
+BUTTON o_ins: sa_topts.insert;
+BUTTON o_del: sa_topts.delete;
+BUTTON o_dal: sa_topts.delall;
+COMBOBOX dbt = FORMONLY.dbtype, COLOR=BLUE,
+  TITLE = "Database type",
+  INITIALIZER=cmbinit_dbtype;
+EDIT sql = FORMONLY.sqltext,
+  TITLE = "SQL Text";
+COMBOBOX i_dbt = FORMONLY.tabopts_dbtype, COLOR=BLUE,
+  NOT NULL, REQUIRED,
+  INITIALIZER=cmbinit_dbtype,
+  COMMENT="This field defines the type of the database";
+TEXTEDIT i_sql = FORMONLY.tabopts_sqltext, STRETCH=BOTH,
+  NOT NULL, REQUIRED,
+  COMMENT="DB specific CREATE TABLE options for this table";
+BUTTON sqlchk: to_check_sqltext;
+
+END
+
+
+INSTRUCTIONS
+
+SCREEN RECORD sa_cols(
+   FORMONLY.colindex,
+   FORMONLY.colname,
+   FORMONLY.typenum,
+   FORMONLY.typel1,
+   FORMONLY.typel2,
+   FORMONLY.typenn,
+   FORMONLY.pkeycol,
+   FORMONLY.defvalue
+);
+
+SCREEN RECORD sa_skeys(
+   FORMONLY.skeyname,
+   FORMONLY.skeycols
+);
+
+SCREEN RECORD sa_fkeys(
+   FORMONLY.fkeyname,
+   FORMONLY.fkeycols,
+   FORMONLY.reftabname,
+   FORMONLY.refconstname,
+   FORMONLY.delrule,
+   FORMONLY.updrule
+);
+
+SCREEN RECORD sa_checks(
+   FORMONLY.checkname,
+   FORMONLY.sqlcond
+);
+
+SCREEN RECORD sa_topts(
+   FORMONLY.dbtype,
+   FORMONLY.sqltext
+);
+
+END
+

@@ -1,0 +1,52 @@
+LAYOUT(VERSION="1.00",TEXT="Generate SQL script")
+VBOX
+GROUP(TEXT="Parameters")
+GRID
+{
+ Database type: [dt                                      ]
+ Filename:      [fn                                      ]
+}
+END
+END
+GROUP(TEXT="Options")
+GRID
+{
+ [nc                                                     ]
+ [fk                                                     ]
+ [rt                                                     ]
+ [qi                                                     ]
+ [ui                                                     ]
+ [to                                                     ]
+}
+END
+END
+END
+END
+
+ATTRIBUTES
+COMBOBOX dt   = FORMONLY.dbtype,
+                NOT NULL, REQUIRED,
+                INITIALIZER=cmbinit_dbtype;
+BUTTONEDIT fn = FORMONLY.filename,
+                NOT NULL, REQUIRED,
+                ACTION=filesave, IMAGE="folder";
+CHECKBOX nc   = FORMONLY.namedconst,
+                NOT NULL, REQUIRED,
+                TEXT="Generate named constraints";
+CHECKBOX fk   = FORMONLY.createfkeys,
+                NOT NULL, REQUIRED,
+                TEXT="Generate foreign keys creation commands";
+CHECKBOX rt   = FORMONLY.droptables,
+                NOT NULL, REQUIRED,
+                TEXT="Generate table deletion commands";
+CHECKBOX qi   = FORMONLY.quotedids,
+                NOT NULL, REQUIRED,
+                TEXT="Generate quoted identifiers";
+CHECKBOX ui   = FORMONLY.upcaseids,
+                NOT NULL, REQUIRED,
+                TEXT="Generate identifiers in uppercase";
+CHECKBOX to   = FORMONLY.tableopts,
+                NOT NULL, REQUIRED,
+                TEXT="Generate DB specific table options";
+END
+
