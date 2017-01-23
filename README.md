@@ -7,6 +7,8 @@ You can import schemas from existing databases, manage tables, columns,
 contraints, indexes, and produce SQL scripts for different type of
 databases servers.
 
+![Genero FGL Schema Editor (GDC)](https://github.com/FourjsGenero/tool_fglschmg/raw/master/docs/fglschmg-screen-001.png)
+
 ## Prerequisites
 
 * Database server supported by Genero (tested with Informix IDS 12)
