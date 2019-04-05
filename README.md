@@ -13,6 +13,7 @@ databases servers.
 
 * Database server supported by Genero (tested with Informix IDS 12)
 * Genero BDL 3.10+
+* Genero Browser Client 1.00.52+
 * Genero Desktop Client 3.10+
 * Genero Studio 3.10+
 * GNU Make
