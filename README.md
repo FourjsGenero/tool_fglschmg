@@ -12,10 +12,10 @@ databases servers.
 ## Prerequisites
 
 * Database server supported by Genero (tested with Informix IDS 12)
-* Genero BDL 3.10+
+* Genero BDL 3.20+
 * Genero Browser Client 1.00.52+
-* Genero Desktop Client 3.10+
-* Genero Studio 3.10+
+* Genero Desktop Client 3.20+
+* Genero Studio 3.20+
 * GNU Make
 
 ## Compilation from command line

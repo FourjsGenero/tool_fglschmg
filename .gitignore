@@ -1,4 +1,5 @@
 *.42?
 bin
-fglschmg.4pwdb
-fglschmg.4pwvs
+*.4pwdb
+*.4pwvs
+*.4pwcfg
