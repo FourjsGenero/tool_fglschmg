@@ -1,8 +1,13 @@
 FORMS=$(patsubst %.per,%.42f,$(wildcard *.per))
 
-PROGMOD=fgldsm_main.42m
+PROGMODS=\
+ fgldsm_main.42m\
+ fgldsm_schema.42m\
+ fgltbasics.42m\
+ fgltdialogs.42m\
+ fgltfiledlg.42m
 
-all: $(PROGMOD) $(FORMS)
+all: $(PROGMODS) $(FORMS)
 
 run: all
 	fglrun fgldsm_main

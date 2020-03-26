@@ -1095,10 +1095,13 @@ FUNCTION sql_ext_db2()
 
   DECLARE cdb2_chk CURSOR FROM
              "SELECT"
-             || "  C.COLNAME,"
+             || "  O.COLNAME,"
              || "  C.TEXT"
-             || " FROM SYSCAT.CHECKS"
-             || " WHERE TABNAME = ? AND UPPER(TABSCHEMA) = ?"
+             || " FROM SYSCAT.CHECKS C, SYSCAT.COLCHECKS O"
+             || " WHERE C.TABNAME = ? AND UPPER(C.TABSCHEMA) = ?"
+             || "   AND C.TABNAME = O.TABNAME AND C.TABSCHEMA = O.TABSCHEMA"
+             || "   AND C.CONSTNAME = O.CONSTNAME"
+             || "   AND O.USAGE = 'R'"
 
   LET up_dbowner = UPSHIFT(ext_params.dbowner)
 
