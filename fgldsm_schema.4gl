@@ -1064,40 +1064,41 @@ FUNCTION sql_ext_db2()
 
   DECLARE cdb2_cdef CURSOR FROM
              "SELECT"
-             || "  DEFAULT"
-             || " FROM SYSIBM.SYSCOLUMNS"
-             || " WHERE UPPER(TBCREATOR) = ? AND TBNAME = ? AND NAME = ?"
+             || "  CAST(C.DEFAULT AS VARCHAR(2000))"
+             || " FROM SYSCAT.COLUMNS C"
+             || " WHERE UPPER(C.TABSCHEMA) = ? AND C.TABNAME = ? AND C.COLNAME = ?"
 
   DECLARE cdb2_pkey CURSOR FROM
              "SELECT"
-             || "  NAME"
-             || " FROM SYSIBM.SYSTABCONST"
-             || " WHERE CONSTRAINTYP='P'"
-             || " AND TBNAME = ? AND UPPER(TBCREATOR) = ?"
+             || "  C.CONSTNAME"
+             || " FROM SYSCAT.TABCONST C"
+             || " WHERE C.TYPE='P'"
+             || " AND C.TABNAME = ? AND UPPER(C.TABSCHEMA) = ?"
 
   DECLARE cdb2_skey CURSOR FROM
              "SELECT"
-             || "  NAME"
-             || " FROM SYSIBM.SYSTABCONST"
-             || " WHERE CONSTRAINTYP='U'"
-             || " AND TBNAME = ? AND UPPER(TBCREATOR) = ?"
+             || "  C.CONSTNAME"
+             || " FROM SYSCAT.TABCONST C"
+             || " WHERE C.TYPE='U'"
+             || " AND C.TABNAME = ? AND UPPER(C.TABSCHEMA) = ?"
 
   DECLARE cdb2_fkey CURSOR FROM
              "SELECT"
-             || "  RELNAME,"
-             || "  REFKEYNAME,"
-             || "  REFTBNAME,"
-             || "  DELETERULE,"
-             || "  UPDATERULE"
-             || " FROM SYSIBM.SYSRELS"
-             || " WHERE TBNAME = ? AND UPPER(CREATOR) = ?"
+             || "  R.CONSTNAME,"
+             || "  R.REFKEYNAME,"
+             || "  R.REFTABNAME,"
+             || "  R.DELETERULE,"
+             || "  R.UPDATERULE"
+             || " FROM SYSCAT.REFERENCES R"
+             || " WHERE R.TABNAME = ? AND UPPER(R.TABSCHEMA) = ?"
+
 
   DECLARE cdb2_chk CURSOR FROM
              "SELECT"
-             || "  NAME,"
-             || "  TEXT"
-             || " FROM SYSIBM.SYSCHECKS"
-             || " WHERE TBNAME = ? AND UPPER(TBCREATOR) = ?"
+             || "  C.COLNAME,"
+             || "  C.TEXT"
+             || " FROM SYSCAT.CHECKS"
+             || " WHERE TABNAME = ? AND UPPER(TABSCHEMA) = ?"
 
   LET up_dbowner = UPSHIFT(ext_params.dbowner)
 
@@ -1145,14 +1146,13 @@ FUNCTION sql_ext_db2()
         LET tables[tabnum].cols[x].typenn   = colnull
      END FOR
 
-     EXECUTE cdb2_pkey USING curr_tabname, up_dbowner
-        INTO cstrname
+     EXECUTE cdb2_pkey USING curr_tabname, up_dbowner INTO cstrname
      IF STATUS==0 THEN
         LET tables[tabnum].pkeyname = casens_name(cstrname)
         LET tmpname = UPSHIFT(cstrname)
         DECLARE cdb2_keycols CURSOR FROM
-                "SELECT K.COLNAME FROM SYSIBM.SYSKEYCOLUSE K"
-              ||" WHERE CONSTNAME = ? ORDER BY COLSEQ"
+                "SELECT K.COLNAME FROM SYSCAT.KEYCOLUSE K"
+              ||" WHERE K.CONSTNAME = ? ORDER BY K.COLSEQ"
         FOREACH cdb2_keycols USING tmpname INTO colname
             LET x = column_lookup(tabnum,colname)
             LET tables[tabnum].cols[x].pkeycol = 1
@@ -1195,8 +1195,7 @@ FUNCTION sql_ext_db2()
         END CASE
      END FOREACH
 
-     FOREACH cdb2_chk USING curr_tabname, up_dbowner
-        INTO cstrname, sqlcond
+     FOREACH cdb2_chk USING curr_tabname, up_dbowner INTO cstrname, sqlcond
         LET sqlcond = sqlcond CLIPPED
         CALL tables[tabnum].checks.appendElement()
         LET x = tables[tabnum].checks.getLength()
@@ -1219,9 +1218,9 @@ FUNCTION db2_columnlist(constrname)
   DEFINE constrname VARCHAR(200)
   DEFINE colname VARCHAR(200)
   DEFINE stmt,list STRING
-  LET stmt = "SELECT COLNAME FROM SYSIBM.SYSKEYCOLUSE"
-          || " WHERE CONSTNAME = '" || UPSHIFT(constrname) || "'"
-          || " ORDER BY COLSEQ"
+  LET stmt = "SELECT K.COLNAME FROM SYSCAT.KEYCOLUSE K"
+          || " WHERE K.CONSTNAME = '" || UPSHIFT(constrname) || "'"
+          || " ORDER BY K.COLSEQ"
   DECLARE db2_columnlist CURSOR FROM stmt
   LET list = NULL
   FOREACH db2_columnlist INTO colname
