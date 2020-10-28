@@ -8,13 +8,12 @@ This tool is a database schema editor.
 The purpose of the database schema is to centralize database table definitions in a unique file (.dbs), and in a unique format, to generate database creation and update scripts for different sort of databases.
 
 The tool can generate SQL scripts for:
-  - Genero DB 3.x
-  - Informix 9.x, 10.x, 11.x
-  - Oracle 9i, 10g
-  - DB2 8.x, 9.x
-  - SQL Server 2000, 2005
-  - MySQL 4.1, 5.x
-  - PostgreSQL 8.x
+  - Informix Database
+  - Oracle Database
+  - IBM DB2 LUW
+  - Microsfot SQL Server
+  - Oracle MySQL / MariaDB
+  - PostgreSQL
 
 If you have an existing database, the first step is to extract schema information from the database, by using the extraction function of this tool.
 

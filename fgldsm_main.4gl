@@ -1650,7 +1650,7 @@ END FUNCTION
 
 FUNCTION sql_extract_schema()
   DEFINE r INTEGER
-  OPEN WINDOW w_extract WITH FORM "fgldsm_extract" ATTRIBUTES(STYLE="dialog")
+  OPEN WINDOW w_extract WITH FORM "fgldsm_extract" ATTRIBUTES(STYLE="dialog2")
   WHILE TRUE 
   INPUT BY NAME ext_params.* WITHOUT DEFAULTS ATTRIBUTES(UNBUFFERED, HELP = 106)
       ON CHANGE username

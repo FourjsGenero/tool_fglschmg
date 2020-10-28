@@ -9,12 +9,14 @@ GRID
  Schema owner:     [dbo                                        ]
  Conversion rules: [cvr                                        ]
  Specific table:   [tab                                        ]
-
+<                                                               >
 <g g2                                                           >
    [cs                       ] [st                        ]
    [                         ] [ie                        ]
    [                         ]
-
+<                                                               >
+[info                                                           ]
+[b_ok       :b_cancel      :                      :b_inter      ]
 }
 END
 END
@@ -55,5 +57,9 @@ CHECKBOX st   = FORMONLY.systables,
 CHECKBOX ie   = FORMONLY.ignerrors,
                 NOT NULL, REQUIRED,
                 TEXT="Ignore errors";
+LABEL info    = FORMONLY.info;
+BUTTON b_ok    : accept;
+BUTTON b_cancel: cancel;
+BUTTON b_inter : interrupt, TEXT="Interrupt";
 END
 

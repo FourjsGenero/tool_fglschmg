@@ -408,6 +408,8 @@ FUNCTION sql_ext_ifx()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -960,6 +962,8 @@ FUNCTION sql_ext_ora()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -1121,6 +1125,8 @@ FUNCTION sql_ext_db2()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -1310,6 +1316,8 @@ FUNCTION sql_ext_hdb()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -1544,6 +1552,8 @@ FUNCTION sql_ext_msv()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -1781,6 +1791,8 @@ FUNCTION sql_ext_mys()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -2038,6 +2050,8 @@ FUNCTION sql_ext_pgs()
      LET tables[tabnum].tabname = casens_name(fgldbsch_get_table_name())
      LET tables[tabnum].owner = ext_params.dbowner CLIPPED
      CALL fglt_log_write(SFMT("Table: %1", fgldbsch_get_table_name()))
+     DISPLAY SFMT("Table: %1", fgldbsch_get_table_name()) TO FORMONLY.info
+     CALL ui.Interface.refresh()
 
      FOR c=1 TO fgldbsch_get_column_count()
         CALL fgldbsch_get_column_info(c) RETURNING coldef.*
@@ -2164,65 +2178,6 @@ END FUNCTION
 
 #-------------------------------------------------------------------------------
 
-FUNCTION sql_get_db_type()
-  DEFINE dbt CHAR(3)
-  INITIALIZE dbt TO NULL
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT user FROM user_users WHERE username=user") THEN
-       LET dbt = "ORA"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT DISTINCT(@@SERVERNAME) FROM INFORMATION_SCHEMA.TABLES") THEN
-       LET dbt = "MSV"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT USER FROM sysibm.systables WHERE name='SYSTABLES'") THEN
-       LET dbt = "DB2"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT USER FROM informix.systables WHERE tabid=1") THEN
-       LET dbt = "IFX"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT USER FROM pg_type WHERE typname = 'bool'") THEN
-       LET dbt = "PGS"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT CURDATE()") THEN
-       LET dbt = "MYS"
-     END IF
-  END IF
-  IF dbt IS NULL THEN
-     IF try_select_user("SELECT USER FROM SYSTEM.TABLE_OF_TABLES WHERE TABLE_NAME = 'TABLE_OF_TABLES'") THEN
-       LET dbt = "ADS"
-     END IF
-  END IF
-  RETURN dbt
-END FUNCTION
-
-FUNCTION try_select_user(stmt)
-  DEFINE stmt STRING
-  DEFINE uname CHAR(50)
-  WHENEVER ERROR CONTINUE
-  DECLARE sTSU CURSOR FROM stmt
-  IF sqlca.sqlcode!=0 THEN RETURN FALSE END IF
-  OPEN sTSU
-  IF sqlca.sqlcode!=0 THEN RETURN FALSE END IF
-  FETCH sTSU INTO uname
-  IF sqlca.sqlcode!=0 THEN RETURN FALSE END IF
-  CLOSE sTSU
-  IF sqlca.sqlcode!=0 THEN RETURN FALSE END IF
-  FREE sTSU
-  IF sqlca.sqlcode!=0 THEN RETURN FALSE END IF
-  WHENEVER ERROR STOP
-  RETURN TRUE
-END FUNCTION
-
 FUNCTION sql_constraint(name)
   DEFINE name STRING
   IF name IS NOT NULL AND sql_params.namedconst==1 THEN
@@ -2254,7 +2209,6 @@ END FUNCTION
 FUNCTION sql_serialize_type_ads(t,c)
   DEFINE t,c INTEGER
   -- Genero db MUST be Informix compatible.
-  -- While writing these lines, Genero DB (3.81) is still missing MONEY(p,s) and DECIMAL(p).
   RETURN sql_serialize_type_ifx(t,c)
 END FUNCTION
 
@@ -3537,18 +3491,18 @@ FUNCTION sql_default_value(dbtype,t,c)
   DEFINE dbtype t_dbtype
   DEFINE t,c INTEGER
   CASE dbtype
-    WHEN "ADS" RETURN sql_default_value_ads(t,c)
     WHEN "IFX" RETURN sql_default_value_ifx(t,c)
     WHEN "ORA" RETURN sql_default_value_ora(t,c)
     WHEN "DB2" RETURN sql_default_value_db2(t,c)
     WHEN "MSV" RETURN sql_default_value_msv(t,c)
     WHEN "PGS" RETURN sql_default_value_pgs(t,c)
     WHEN "MYS" RETURN sql_default_value_mys(t,c)
+    WHEN "HDB" RETURN sql_default_value_hdb(t,c)
   END CASE
   RETURN NULL
 END FUNCTION
 
-FUNCTION sql_default_value_ads(t,c)
+FUNCTION sql_default_value_hdb(t,c)
   DEFINE t,c INTEGER
   IF tables[t].cols[c].typenum == dtn_boolean THEN
      RETURN tables[t].cols[c].defvalue
