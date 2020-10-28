@@ -115,13 +115,13 @@ FUNCTION schema_extraction()
   END IF
 
   CASE sql_params.dbtype
-       WHEN "ADS" LET r = sql_ext_ads()
        WHEN "IFX" LET r = sql_ext_ifx()
        WHEN "ORA" LET r = sql_ext_ora()
        WHEN "DB2" LET r = sql_ext_db2()
        WHEN "PGS" LET r = sql_ext_pgs()
        WHEN "MYS" LET r = sql_ext_mys()
        WHEN "MSV" LET r = sql_ext_msv()
+       WHEN "HDB" LET r = sql_ext_hdb()
   END CASE
 
   IF r<0 THEN
@@ -1235,19 +1235,15 @@ END FUNCTION
 
 #-------------------------------------------------------------------------------
 
-FUNCTION sql_ext_ads()
+FUNCTION sql_ext_hdb()
   DEFINE colname   VARCHAR(200)
   DEFINE coldflt   VARCHAR(2000)
   DEFINE colnull   INTEGER
   DEFINE cstrname  VARCHAR(200)
   DEFINE cstrsch   VARCHAR(200)
-  DEFINE cstrcat   VARCHAR(200)
   DEFINE rcstrname VARCHAR(200)
   DEFINE rcstrsch  VARCHAR(200)
-  DEFINE rcstrcat  VARCHAR(200)
   DEFINE rtabname  VARCHAR(200)
-  DEFINE rtabsch   VARCHAR(200)
-  DEFINE rtabcat   VARCHAR(200)
   DEFINE delrule   VARCHAR(50)
   DEFINE updrule   VARCHAR(50)
   DEFINE sqlcond   TEXT
@@ -1255,63 +1251,48 @@ FUNCTION sql_ext_ads()
   DEFINE x,s,c     INTEGER
   DEFINE typenum, typel1, typel2 SMALLINT
   DEFINE curr_tabname VARCHAR(200)
-  DEFINE curr_catalog VARCHAR(200)
   DEFINE up_dbowner VARCHAR(200)
 
   LOCATE sqlcond IN MEMORY
 
-  DECLARE cads_cdef CURSOR FROM
+  DECLARE chdb_cdef CURSOR FROM
              "SELECT"
-             || "  C.COLUMN_DEFAULT"
-             || " FROM INFORMATION_SCHEMA.COLUMNS C"
-             || " WHERE C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ? AND C.TABLE_CATALOG = ? AND C.COLUMN_NAME = ?"
+             || "  C.DEFAULT_VALUE"
+             || " FROM SYS.TABLE_COLUMNS C"
+             || " WHERE C.TABLE_NAME = ? AND C.SCHEMA_NAME = ? AND C.COLUMN_NAME = ?"
 
-  DECLARE cads_pkey CURSOR FROM
+  DECLARE chdb_pkey CURSOR FROM
              "SELECT"
              || "  C.CONSTRAINT_NAME,"
              || "  C.COLUMN_NAME"
-             || " FROM INFORMATION_SCHEMA.ANTS_CONSTRAINTS C"
-             || " WHERE C.CONSTRAINT_TYPE LIKE '%PRIMARY KEY CONSTRAINT'"
-             || "   AND C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ? AND C.TABLE_CATALOG = ?"
-             || " ORDER BY C.COLUMN_POSITION"
+             || " FROM SYS.CONSTRAINTS C"
+             || " WHERE C.IS_PRIMARY_KEY = 'TRUE'"
+             || "   AND C.TABLE_NAME = ? AND C.SCHEMA_NAME = ?"
+             || " ORDER BY C.POSITION"
 
-  DECLARE cads_skey CURSOR FROM
+  DECLARE chdb_skey CURSOR FROM
              "SELECT DISTINCT"
-             || "  C.CONSTRAINT_NAME, C.CONSTRAINT_SCHEMA, C.CONSTRAINT_CATALOG"
-             || " FROM INFORMATION_SCHEMA.ANTS_CONSTRAINTS C"
-             || " WHERE C.CONSTRAINT_TYPE LIKE '%UNIQUE CONSTRAINT'"
-             || "   AND C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ? AND C.TABLE_CATALOG = ?"
-             || " ORDER BY C.CONSTRAINT_NAME"
+             || "  C.CONSTRAINT_NAME, C.SCHEMA_NAME"
+             || " FROM SYS.CONSTRAINTS C"
+             || " WHERE C.IS_UNIQUE_KEY = 'TRUE'"
+             || "   AND C.TABLE_NAME = ? AND C.SCHEMA_NAME = ?"
+             || " ORDER BY C.CONSTRAINT_NAME, C.POSITION"
 
-  DECLARE cads_fkey CURSOR FROM
+  DECLARE chdb_fkey CURSOR FROM
              "SELECT DISTINCT"
-             || " C.CONSTRAINT_NAME, C.CONSTRAINT_SCHEMA, C.CONSTRAINT_CATALOG,"
-             || " UC.CONSTRAINT_NAME, UC.CONSTRAINT_SCHEMA, UC.CONSTRAINT_CATALOG,"
-             || " UC.TABLE_NAME, UC.TABLE_SCHEMA, UC.TABLE_CATALOG,"
+             || " C.CONSTRAINT_NAME, C.SCHEMA_NAME,"
+             || " C.REFERENCED_CONSTRAINT_NAME, UC.REFERENCED_SCHEMA_NAME,"
+             || " C.REFERENCE_TABLE_NAME,"
              || " C.DELETE_RULE, C.UPDATE_RULE"
-             || " FROM INFORMATION_SCHEMA.ANTS_CONSTRAINTS C,"
-             || "      INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS RC,"
-             || "      INFORMATION_SCHEMA.ANTS_CONSTRAINTS UC"
-             || " WHERE C.CONSTRAINT_TYPE LIKE '%FOREIGN KEY CONSTRAINT'"
-             || "   AND RC.CONSTRAINT_NAME = C.CONSTRAINT_NAME"
-             || "   AND RC.CONSTRAINT_SCHEMA = C.CONSTRAINT_SCHEMA"
-             || "   AND RC.CONSTRAINT_CATALOG = C.CONSTRAINT_CATALOG"
-             || "   AND UC.CONSTRAINT_NAME = RC.UNIQUE_CONSTRAINT_NAME"
-             || "   AND UC.CONSTRAINT_SCHEMA = RC.UNIQUE_CONSTRAINT_SCHEMA"
-             || "   AND UC.CONSTRAINT_CATALOG = RC.UNIQUE_CONSTRAINT_CATALOG"
-             || "   AND C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ? AND C.TABLE_CATALOG = ?"
+             || " FROM SYS.REFERENTIAL_CONSTRAINTS C"
+             || " WHERE C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ?"
              || " ORDER BY C.CONSTRAINT_NAME"
 
-  DECLARE cads_chk CURSOR FROM
+{ Does not exist
+  DECLARE chdb_chk CURSOR FROM
              "SELECT"
-             || "  C.CONSTRAINT_NAME,"
-             || "  C.CHECK_CLAUSE"
-             || " FROM INFORMATION_SCHEMA.ANTS_CONSTRAINTS C"
-             || " WHERE C.CONSTRAINT_TYPE LIKE 'CHECK CONSTRAINT%'"
-             || "   AND C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ? AND C.TABLE_CATALOG = ?"
-             || " ORDER BY C.CONSTRAINT_NAME"
+}
 
-  LET curr_catalog = "ANTS"
   LET up_dbowner = UPSHIFT(ext_params.dbowner)
 
   WHILE TRUE
@@ -1346,7 +1327,7 @@ FUNCTION sql_ext_ads()
            GOTO next_table_ifx
         END IF
         LET coldflt = NULL
-        EXECUTE cads_cdef USING curr_tabname, up_dbowner, curr_catalog, coldef.colname INTO coldflt
+        EXECUTE chdb_cdef USING curr_tabname, up_dbowner, coldef.colname INTO coldflt
         CALL tables[tabnum].cols.appendElement()
         LET x = tables[tabnum].cols.getLength()
         LET tables[tabnum].cols[x].colname  = casens_name(coldef.colname)
@@ -1358,7 +1339,7 @@ FUNCTION sql_ext_ads()
         LET tables[tabnum].cols[x].typenn   = colnull
      END FOR
 
-     FOREACH cads_pkey USING curr_tabname, up_dbowner, curr_catalog
+     FOREACH chdb_pkey USING curr_tabname, up_dbowner
                        INTO cstrname, colname
         IF tables[tabnum].pkeyname IS NULL THEN
            LET tables[tabnum].pkeyname = casens_name(cstrname)
@@ -1367,30 +1348,26 @@ FUNCTION sql_ext_ads()
         LET tables[tabnum].cols[x].pkeycol = 1
      END FOREACH
 
-     FOREACH cads_skey USING curr_tabname, up_dbowner, curr_catalog
-                       INTO cstrname, cstrsch, cstrcat
+     FOREACH chdb_skey USING curr_tabname, up_dbowner
+                       INTO cstrname, cstrsch
         CALL tables[tabnum].skeys.appendElement()
         LET x = tables[tabnum].skeys.getLength()
         LET tables[tabnum].skeys[x].skeyname = casens_name(cstrname)
-        LET tables[tabnum].skeys[x].skeycols = ads_columnlist(cstrname,cstrsch,cstrcat,"%UNIQUE CONSTRAINT")
+        LET tables[tabnum].skeys[x].skeycols = hdb_columnlist(cstrname,cstrsch,"U")
      END FOREACH
 
-     FOREACH cads_fkey USING curr_tabname, up_dbowner, curr_catalog
+     FOREACH chdb_fkey USING curr_tabname, up_dbowner
         INTO cstrname,
              cstrsch,
-             cstrcat,
              rcstrname,
              rcstrsch,
-             rcstrcat,
              rtabname,
-             rtabsch,
-             rtabcat,
              delrule,
              updrule
         CALL tables[tabnum].fkeys.appendElement()
         LET x = tables[tabnum].fkeys.getLength()
         LET tables[tabnum].fkeys[x].fkeyname = casens_name(cstrname)
-        LET tables[tabnum].fkeys[x].fkeycols = ads_columnlist(cstrname,cstrsch,cstrcat,"%FOREIGN KEY CONSTRAINT")
+        LET tables[tabnum].fkeys[x].fkeycols = hdb_columnlist(cstrname,cstrsch,"F")
         LET tables[tabnum].fkeys[x].reftabname = casens_name(rtabname)
         LET tables[tabnum].fkeys[x].refconstname = casens_name(rcstrname)
         CASE delrule
@@ -1398,18 +1375,19 @@ FUNCTION sql_ext_ads()
           WHEN "RESTRICT"     LET tables[tabnum].fkeys[x].delrule = udrule_restrict
           WHEN "SET NULL"     LET tables[tabnum].fkeys[x].delrule = udrule_setnull
           WHEN "SET DEFAULT"  LET tables[tabnum].fkeys[x].delrule = udrule_setdefault
-          WHEN "NO ACTION"    LET tables[tabnum].fkeys[x].delrule = udrule_default
+          OTHERWISE           LET tables[tabnum].fkeys[x].delrule = udrule_default
         END CASE
         CASE updrule
           WHEN "CASCADE"      LET tables[tabnum].fkeys[x].updrule = udrule_cascade
           WHEN "RESTRICT"     LET tables[tabnum].fkeys[x].updrule = udrule_restrict
           WHEN "SET NULL"     LET tables[tabnum].fkeys[x].updrule = udrule_setnull
           WHEN "SET DEFAULT"  LET tables[tabnum].fkeys[x].updrule = udrule_setdefault
-          WHEN "NO ACTION"    LET tables[tabnum].fkeys[x].updrule = udrule_default
+          OTHERWISE           LET tables[tabnum].fkeys[x].updrule = udrule_default
         END CASE
      END FOREACH
 
-     FOREACH cads_chk USING curr_tabname, up_dbowner, curr_catalog
+{
+     FOREACH chdb_chk USING curr_tabname, up_dbowner
         INTO cstrname, sqlcond
         LET sqlcond = sqlcond CLIPPED
         CALL tables[tabnum].checks.appendElement()
@@ -1417,6 +1395,7 @@ FUNCTION sql_ext_ads()
         LET tables[tabnum].checks[x].checkname = casens_name(cstrname)
         LET tables[tabnum].checks[x].sqlcond = sqlcond
      END FOREACH
+}
 
 LABEL next_table_ifx:
   END WHILE
@@ -1429,24 +1408,33 @@ LABEL next_table_ifx:
   RETURN 0
 END FUNCTION
 
-FUNCTION ads_columnlist(constrname,constrsch,constrcat,constrtyp)
+FUNCTION hdb_columnlist(constrname,constrsch,constrtyp)
   DEFINE constrname VARCHAR(200)
   DEFINE constrsch  VARCHAR(200)
-  DEFINE constrcat  VARCHAR(200)
-  DEFINE constrtyp  VARCHAR(200)
+  DEFINE constrtyp  CHAR(1)
   DEFINE colname VARCHAR(200)
   DEFINE stmt,list STRING
-  LET stmt = "SELECT C.COLUMN_NAME"
-          || " FROM INFORMATION_SCHEMA.ANTS_CONSTRAINTS C"
-          || " WHERE C.CONSTRAINT_NAME = '" || constrname || "'"
-          || "   AND C.CONSTRAINT_SCHEMA = '" || constrsch || "'"
-          || "   AND C.CONSTRAINT_CATALOG = '" || constrcat || "'"
-          || "   AND C.CONSTRAINT_TYPE LIKE '" || constrtyp || "'"
-          || "   AND C.COLUMN_NAME NOT LIKE '$%'"  -- ADS bug? $MultiColumnIndex4L
-          || " ORDER BY C.COLUMN_POSITION"
-  DECLARE ads_columnlist CURSOR FROM stmt
+  CASE constrtyp
+  WHEN "U"
+     LET stmt = "SELECT C.COLUMN_NAME"
+             || " FROM SYS.CONSTRAINTS C"
+             || " WHERE C.CONSTRAINT_NAME = '" || constrname || "'"
+             || "   AND C.SCHEMA_NAME = '" || constrsch || "'"
+             || "   AND C.IS_UNIQUE_KEY = 'TRUE'"
+             || " ORDER BY C.POSITION"
+  WHEN "F"
+     LET stmt = "SELECT C.COLUMN_NAME"
+             || " FROM SYS.REFERENTIAL_CONSTRAINTS C"
+             || " WHERE C.CONSTRAINT_NAME = '" || constrname || "'"
+             || "   AND C.SCHEMA_NAME = '" || constrsch || "'"
+             || " ORDER BY C.POSITION"
+  OTHERWISE
+     DISPLAY "ERROR: Invalid constraint type."
+     EXIT PROGRAM 1
+  END CASE
+  DECLARE hdb_columnlist CURSOR FROM stmt
   LET list = NULL
-  FOREACH ads_columnlist INTO colname
+  FOREACH hdb_columnlist INTO colname
      IF list IS NOT NULL THEN LET list = list, "," END IF
      LET list = list, casens_name(colname)
   END FOREACH
