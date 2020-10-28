@@ -2206,9 +2206,8 @@ FUNCTION sql_serialize_qual2(p,s)
   RETURN NULL
 END FUNCTION
 
-FUNCTION sql_serialize_type_ads(t,c)
+FUNCTION sql_serialize_type_hdb(t,c)
   DEFINE t,c INTEGER
-  -- Genero db MUST be Informix compatible.
   RETURN sql_serialize_type_ifx(t,c)
 END FUNCTION
 
@@ -3259,12 +3258,12 @@ FUNCTION sql_serialize_type(dbtype,t,c)
   DEFINE t,c INTEGER
   CASE dbtype
     WHEN "IFX" RETURN sql_serialize_type_ifx(t,c)
-    WHEN "ADS" RETURN sql_serialize_type_ads(t,c)
     WHEN "ORA" RETURN sql_serialize_type_ora(t,c)
     WHEN "DB2" RETURN sql_serialize_type_db2(t,c)
     WHEN "MSV" RETURN sql_serialize_type_msv(t,c)
     WHEN "PGS" RETURN sql_serialize_type_pgs(t,c)
     WHEN "MYS" RETURN sql_serialize_type_mys(t,c)
+    WHEN "HDB" RETURN sql_serialize_type_hdb(t,c)
   END CASE
   RETURN NULL
 END FUNCTION
