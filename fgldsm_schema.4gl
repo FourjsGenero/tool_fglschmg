@@ -1274,19 +1274,18 @@ FUNCTION sql_ext_hdb()
              "SELECT DISTINCT"
              || "  C.CONSTRAINT_NAME, C.SCHEMA_NAME"
              || " FROM SYS.CONSTRAINTS C"
-             || " WHERE C.IS_UNIQUE_KEY = 'TRUE'"
+             || " WHERE C.IS_PRIMARY_KEY = 'FALSE'"
+             || "   AND C.IS_UNIQUE_KEY = 'TRUE'"
              || "   AND C.TABLE_NAME = ? AND C.SCHEMA_NAME = ?"
-             || " ORDER BY C.CONSTRAINT_NAME, C.POSITION"
 
   DECLARE chdb_fkey CURSOR FROM
              "SELECT DISTINCT"
              || " C.CONSTRAINT_NAME, C.SCHEMA_NAME,"
-             || " C.REFERENCED_CONSTRAINT_NAME, UC.REFERENCED_SCHEMA_NAME,"
-             || " C.REFERENCE_TABLE_NAME,"
+             || " C.REFERENCED_CONSTRAINT_NAME, C.REFERENCED_SCHEMA_NAME,"
+             || " C.REFERENCED_TABLE_NAME,"
              || " C.DELETE_RULE, C.UPDATE_RULE"
              || " FROM SYS.REFERENTIAL_CONSTRAINTS C"
-             || " WHERE C.TABLE_NAME = ? AND C.TABLE_SCHEMA = ?"
-             || " ORDER BY C.CONSTRAINT_NAME"
+             || " WHERE C.TABLE_NAME = ? AND C.SCHEMA_NAME = ?"
 
 { Does not exist
   DECLARE chdb_chk CURSOR FROM

@@ -1600,12 +1600,12 @@ FUNCTION cmbinit_dbtype(cb)
   CALL cb.clear()
   CALL cb.addItem( "_?_", "Not specified" )
   CALL cb.addItem( "IFX", "Informix" )
-  CALL cb.addItem( "ADS", "Genero DB" )
-  CALL cb.addItem( "ORA", "Oracle" )
-  CALL cb.addItem( "DB2", "DB2 UDB" )
+  CALL cb.addItem( "ORA", "Oracle DB" )
+  CALL cb.addItem( "DB2", "IBM DB2 LUW" )
   CALL cb.addItem( "MSV", "SQL Server" )
   CALL cb.addItem( "PGS", "PostgreSQL" )
-  CALL cb.addItem( "MYS", "MySQL" )
+  CALL cb.addItem( "MYS", "Oracle MySQL" )
+  CALL cb.addItem( "HDB", "SAP HANA" )
 END FUNCTION
 
 FUNCTION cmbinit_dbdrivers(cb)
@@ -2195,7 +2195,7 @@ FUNCTION display_usage()
   DISPLAY "  -ds schema : Database .dbs metaschema file name."
   DISPLAY "  -gs : Generate SQL script without interactive window."
   DISPLAY "  -of name : SQL script output file name."
-  DISPLAY "  -dt type : Database type (IFX,ORA,DB2,MSV,MYS,PGS)."
+  DISPLAY "  -dt type : Database type (IFX,ORA,DB2,MSV,MYS,PGS,HDB)."
   DISPLAY "  -gnc : Generate named constraints."
   DISPLAY "  -gfk : Generate foreign key creation commands."
   DISPLAY "  -gdt : Generate table deletion commands."
