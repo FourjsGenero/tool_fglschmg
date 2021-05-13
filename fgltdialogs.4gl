@@ -155,6 +155,8 @@ PUBLIC FUNCTION fglt_prompt(title,comment,label,defval,options)
   DEFINE f ui.Form
   DEFINE value STRING
 
+  LET options = NULL
+
   OPEN WINDOW __fgltprompt WITH FORM "fgltprompt"
        ATTRIBUTES(STYLE="dialog",TEXT=title)
 

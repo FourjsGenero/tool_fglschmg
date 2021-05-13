@@ -93,7 +93,7 @@ PUBLIC FUNCTION fglt_cmdarg_option_check(optlist)
        CALL optarr.appendElement()
        IF i > 0 THEN
           LET optarr[optarr.getLength()].hasparam = 1
-          LET optspec = optspec.substring(1,i-1)
+          LET optspec = optspec.subString(1,i-1)
        END IF
        LET optarr[optarr.getLength()].optname = optspec
     END WHILE
@@ -102,7 +102,7 @@ PUBLIC FUNCTION fglt_cmdarg_option_check(optlist)
         IF NOT fglt_cmdarg_option_isopt(optspec) THEN
            IF indiv THEN CONTINUE FOR ELSE RETURN i END IF
         END IF
-        LET optspec = optspec.substring(2,optspec.getLength())
+        LET optspec = optspec.subString(2,optspec.getLength())
         LET found = FALSE
         FOR j=1 TO optarr.getLength()
             IF optarr[j].optname == optspec THEN

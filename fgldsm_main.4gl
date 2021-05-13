@@ -146,7 +146,7 @@ END MAIN
 
 FUNCTION params_filename()
   CONSTANT sqlgp_resource = ".fglschmg"
-  RETURN os.Path.homedir() || os.Path.separator() || sqlgp_resource
+  RETURN os.Path.homeDir() || os.Path.separator() || sqlgp_resource
 END FUNCTION
 
 FUNCTION params_init(schema)
@@ -154,7 +154,7 @@ FUNCTION params_init(schema)
   DEFINE ch base.Channel
   DEFINE pname, pvalue, sqlfile STRING
 
-  LET sqlfile = os.Path.basename(schema)
+  LET sqlfile = os.Path.baseName(schema)
   LET sqlfile = get_schname_from_fname(sqlfile) || ".sql"
 
   LET glb_params.newtabname = "table%1"
@@ -187,7 +187,7 @@ FUNCTION params_init(schema)
   WHENEVER ERROR CONTINUE
   CALL ch.openFile(params_filename(),"r")
   WHENEVER ERROR STOP
-  IF STATUS < 0 THEN RETURN END IF
+  IF status < 0 THEN RETURN END IF
 
   WHILE ch.read([pname,pvalue])
 
@@ -257,7 +257,7 @@ FUNCTION params_save()
   WHENEVER ERROR CONTINUE
   CALL ch.openFile(params_filename(),"w")
   WHENEVER ERROR STOP
-  IF STATUS < 0 THEN RETURN END IF
+  IF status < 0 THEN RETURN END IF
 
   CALL ch.write( ["glb_params.newtabname",   glb_params.newtabname] )
   CALL ch.write( ["glb_params.newpkeyname",  glb_params.newpkeyname] )
@@ -302,7 +302,7 @@ FUNCTION ask_schema_to_load()
                       fext_dsfilt,"cd,dd,df,sh,oe")
   IF filename IS NOT NULL THEN
      LET curschema = filename
-     LET dlg_params.fileopendir = os.Path.dirname(filename)
+     LET dlg_params.fileopendir = os.Path.dirName(filename)
      RETURN TRUE
   ELSE
      RETURN FALSE
@@ -314,8 +314,8 @@ FUNCTION ask_schema_to_saveas()
   LET filename = get_schname_from_fname(curschema) || "_copy.dbs"
   LET filename = fglt_file_savedlg(
                       NULL,
-                      os.Path.dirname(filename),
-                      os.Path.basename(filename),
+                      os.Path.dirName(filename),
+                      os.Path.baseName(filename),
                       fext_dsfilt,"cd,dd,df,sh,oe")
   IF filename IS NOT NULL THEN
      LET curschema = filename
@@ -480,6 +480,7 @@ END FUNCTION
 FUNCTION tabdef_check_tabname(d)
   DEFINE d ui.Dialog
   DEFINE i,n INTEGER
+  LET d = NULL
   IF NOT is_identifier_1(tabname) THEN
      CALL __mbox_ok(cols_msgtitle, "The name of the table must be an identifier", "stop")
      RETURN FALSE
@@ -504,11 +505,11 @@ END FUNCTION
 FUNCTION tabdef_check_pkeyname(d)
   DEFINE d ui.Dialog
   DEFINE t,c,p INTEGER
-  IF table_has_pkeycols(curtable) AND LENGTH(pkeyname) == 0 THEN
+  IF table_has_pkeycols(curtable) AND length(pkeyname) == 0 THEN
      CALL __mbox_ok(tabdef_msgtitle, "Primary key columns defined without a constraint name", "stop")
      RETURN FALSE
   END IF
-  IF LENGTH(pkeyname) == 0 THEN RETURN TRUE END IF
+  IF length(pkeyname) == 0 THEN RETURN TRUE END IF
   IF NOT is_identifier_1(pkeyname) THEN
      CALL __mbox_ok(tabdef_msgtitle, "The name of the primary key must be an identifier", "stop")
      RETURN FALSE
@@ -1170,7 +1171,7 @@ LABEL sqltext_check:
 
       ON ACTION zoom_refkey
          LET prow = DIALOG.getCurrentRow("sa_fkeys")
-         IF LENGTH(fkeys[prow].reftabname) == 0 THEN CONTINUE DIALOG END IF
+         IF length(fkeys[prow].reftabname) == 0 THEN CONTINUE DIALOG END IF
          LET tmp = fkey_constraint_select(fkeys[prow].reftabname)
          IF tmp IS NOT NULL THEN
             LET fkeys[prow].refconstname = tmp
@@ -1270,9 +1271,11 @@ FUNCTION tabdef_extract(d)
           IF schema_load(curschema) == 0 THEN
              LET curtable = 1
              CALL tabdef_invars_read(d)
+             RETURN TRUE
           END IF
        END IF
   END CASE
+  RETURN FALSE
 END FUNCTION
 
 FUNCTION topts_lookup_dbtype_usage(dbtype, r)
@@ -1289,6 +1292,7 @@ END FUNCTION
 FUNCTION topts_check_dbtype_unicity(d)
   DEFINE d ui.Dialog
   DEFINE r INTEGER
+  LET d = NULL
   -- Check all lines!
   FOR r=1 TO tabopts.getLength()
       IF tabopts[r].dbtype == "_?_" THEN CONTINUE FOR END IF
@@ -1731,7 +1735,7 @@ FUNCTION sql_script_ask_parameters()
      LET params.upcaseids = FALSE
   END IF
   IF params.filename IS NULL THEN
-      LET tmpstr = os.Path.basename(get_schname_from_fname(curschema))
+      LET tmpstr = os.Path.baseName(get_schname_from_fname(curschema))
       LET params.filename = "." || os.Path.separator() || tmpstr || ".sql"
   END IF
   INPUT BY NAME params.*
@@ -1739,8 +1743,8 @@ FUNCTION sql_script_ask_parameters()
       ON ACTION filesave
          LET tmpstr = fglt_file_savedlg(
                            NULL,
-                           os.Path.dirname(params.filename),
-                           os.Path.basename(params.filename),
+                           os.Path.dirName(params.filename),
+                           os.Path.baseName(params.filename),
                            "*.sql","cd,dd,df,sh,oe")
          IF tmpstr IS NOT NULL THEN
             LET params.filename = tmpstr
@@ -1981,7 +1985,7 @@ FUNCTION fkeys_verify_typematch(d)
          LET refcols[refcols.getLength()] = tok.nextToken()
      END WHILE
   END IF
-  IF cols.getLength()!=refcols.getlength() THEN
+  IF cols.getLength()!=refcols.getLength() THEN
      CALL __mbox_ok(fkeys_msgtitle, "Number of columns does not match reference constraint column count", "stop")
      RETURN FALSE
   END IF

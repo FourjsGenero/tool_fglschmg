@@ -59,7 +59,7 @@ FUNCTION schema_extraction()
 
   -- Owner is mandatory, otherwise we can't distinguish unique tables to 
   -- extract constraints and other table properties....
-  IF LENGTH(ext_params.dbowner) == 0 THEN
+  IF length(ext_params.dbowner) == 0 THEN
      CALL fglt_log_write("")
      CALL fglt_log_write("ERROR: Must provide db owner to extract table information...")
      LET r=-1
@@ -196,8 +196,8 @@ END FUNCTION
 FUNCTION casens_name(n)
   DEFINE n STRING
   CASE ext_params.casens
-       WHEN 1 RETURN UPSHIFT(n)
-       WHEN 2 RETURN DOWNSHIFT(n)
+       WHEN 1 RETURN upshift(n)
+       WHEN 2 RETURN downshift(n)
   END CASE
   RETURN n
 END FUNCTION
@@ -251,7 +251,7 @@ FUNCTION sql_ext_ifx()
 
   PREPARE sd FROM "SELECT t.tabname FROM informix.systables t WHERE t.tabname = 'sysdefaults'"
   EXECUTE sd INTO tabname
-  LET hasdefs = (SQLCA.SQLCODE==0)
+  LET hasdefs = (sqlca.sqlcode==0)
   IF hasdefs THEN
      PREPARE stcd_ifx FROM
              "SELECT D.TYPE, D.DEFAULT"
@@ -853,9 +853,9 @@ FUNCTION ora_columnlist(owner,constrname)
   DEFINE colname VARCHAR(100)
   DEFINE stmt,list STRING
   LET stmt = "SELECT COLUMN_NAME FROM ALL_CONS_COLUMNS"
-          || " WHERE CONSTRAINT_NAME = '" || UPSHIFT(constrname) || "'"
+          || " WHERE CONSTRAINT_NAME = '" || upshift(constrname) || "'"
   IF owner IS NOT NULL THEN
-     LET stmt = stmt || " AND OWNER = '" || UPSHIFT(owner) || "'"
+     LET stmt = stmt || " AND OWNER = '" || upshift(owner) || "'"
   END IF
   LET stmt = stmt || " ORDER BY POSITION"
   DECLARE ora_columnlist CURSOR FROM stmt
@@ -944,7 +944,7 @@ FUNCTION sql_ext_ora()
              || "   AND C.SEARCH_CONDITION NOT LIKE '% IS NOT NULL'"
 }
 
-  LET up_dbowner = UPSHIFT(ext_params.dbowner)
+  LET up_dbowner = upshift(ext_params.dbowner)
 
   WHILE TRUE
 
@@ -1107,7 +1107,7 @@ FUNCTION sql_ext_db2()
              || "   AND C.CONSTNAME = O.CONSTNAME"
              || "   AND O.USAGE = 'R'"
 
-  LET up_dbowner = UPSHIFT(ext_params.dbowner)
+  LET up_dbowner = upshift(ext_params.dbowner)
 
   WHILE TRUE
 
@@ -1156,9 +1156,9 @@ FUNCTION sql_ext_db2()
      END FOR
 
      EXECUTE cdb2_pkey USING curr_tabname, up_dbowner INTO cstrname
-     IF STATUS==0 THEN
+     IF status==0 THEN
         LET tables[tabnum].pkeyname = casens_name(cstrname)
-        LET tmpname = UPSHIFT(cstrname)
+        LET tmpname = upshift(cstrname)
         DECLARE cdb2_keycols CURSOR FROM
                 "SELECT K.COLNAME FROM SYSCAT.KEYCOLUSE K"
               ||" WHERE K.CONSTNAME = ? ORDER BY K.COLSEQ"
@@ -1228,7 +1228,7 @@ FUNCTION db2_columnlist(constrname)
   DEFINE colname VARCHAR(200)
   DEFINE stmt,list STRING
   LET stmt = "SELECT K.COLNAME FROM SYSCAT.KEYCOLUSE K"
-          || " WHERE K.CONSTNAME = '" || UPSHIFT(constrname) || "'"
+          || " WHERE K.CONSTNAME = '" || upshift(constrname) || "'"
           || " ORDER BY K.COLSEQ"
   DECLARE db2_columnlist CURSOR FROM stmt
   LET list = NULL
@@ -1298,7 +1298,7 @@ FUNCTION sql_ext_hdb()
              "SELECT"
 }
 
-  LET up_dbowner = UPSHIFT(ext_params.dbowner)
+  LET up_dbowner = upshift(ext_params.dbowner)
 
   WHILE TRUE
 
@@ -1534,7 +1534,7 @@ FUNCTION sql_ext_msv()
              || "   AND C.TABLE_NAME = ? AND UPPER(C.TABLE_SCHEMA) = ? AND C.TABLE_CATALOG = DB_NAME()"
              || " ORDER BY C.CONSTRAINT_NAME"
 
-  LET up_dbowner = UPSHIFT(ext_params.dbowner)
+  LET up_dbowner = upshift(ext_params.dbowner)
 
   WHILE TRUE
 
@@ -1754,7 +1754,7 @@ FUNCTION sql_ext_mys()
              || "   AND TC1.TABLE_NAME = ? AND TC1.TABLE_SCHEMA = DATABASE()"
              || " ORDER BY C.CONSTRAINT_NAME"
   WHENEVER ERROR STOP
-  LET refconst = ( SQLCA.SQLCODE==0 )
+  LET refconst = ( sqlca.sqlcode==0 )
   IF NOT refconst THEN
      CALL fglt_log_write("WARNING: Failed to select from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS, no foreign keys will be found.")
      CALL fglt_log_write("")
@@ -2032,7 +2032,7 @@ FUNCTION sql_ext_pgs()
              || "   AND C.RELNAME = ?"
              || " ORDER BY K.CONNAME"
 
-  LET up_dbowner = UPSHIFT(ext_params.dbowner)
+  LET up_dbowner = upshift(ext_params.dbowner)
 
   WHILE TRUE
 
@@ -3318,7 +3318,7 @@ FUNCTION sql_generate_script(schema)
   LET ch = base.Channel.create()
   CALL ch.setDelimiter("")
 
-  CALL ch.openfile(sql_params.filename,"w")
+  CALL ch.openFile(sql_params.filename,"w")
 
   LET sql = "-- SQL creation script\n",
             "--     Schema          : ", schema, "\n",
@@ -3353,7 +3353,7 @@ FUNCTION sql_generate_script(schema)
          LET ctype = "CHAR(100)"
       END IF
       LET sql = sql, " ", sql_identifier(tables[t].cols[c].colname), " ", ctype
-      IF LENGTH(tables[t].cols[c].defvalue) > 0 THEN
+      IF length(tables[t].cols[c].defvalue) > 0 THEN
          LET sql = sql, " DEFAULT ", sql_default_value(sql_params.dbtype,t,c)
       END IF
       IF tables[t].cols[c].typenn THEN
@@ -4127,7 +4127,7 @@ FUNCTION key_verify_colset(tabnum,colset)
   DEFINE colset STRING
   DEFINE tok base.StringTokenizer
   DEFINE i INTEGER
-  IF LENGTH(colset) == 0 THEN RETURN -3 END IF
+  IF length(colset) == 0 THEN RETURN -3 END IF
   LET tok = base.StringTokenizer.create(colset,",")
   WHILE tok.hasMoreTokens()
       LET i = column_lookup(tabnum,tok.nextToken())
@@ -4563,6 +4563,8 @@ END FUNCTION
 FUNCTION cols_verify_defvalue_string( typel1, defvalue )
   DEFINE typel1 INTEGER
   DEFINE defvalue STRING
+  LET typel1 = NULL
+  LET defvalue = NULL
 { We relax to allow keywords like USER...
   IF NOT is_singlequoted(defvalue) THEN
      RETURN FALSE
@@ -4598,6 +4600,7 @@ END FUNCTION
 FUNCTION cols_verify_defvalue_datetime( typenum, defvalue )
   DEFINE typenum INTEGER
   DEFINE defvalue STRING
+  LET typenum = NULL
   -- We do not accept "CURRENT x TO y", see SQL generation.
   RETURN ( defvalue == "CURRENT" )
 END FUNCTION
@@ -4605,19 +4608,22 @@ END FUNCTION
 FUNCTION cols_verify_defvalue_interval( typenum, typel1, defvalue )
   DEFINE typenum, typel1 INTEGER
   DEFINE defvalue STRING
+  LET typenum = NULL
+  LET typel1 = NULL
   RETURN is_singlequoted(defvalue)
 END FUNCTION
 
 FUNCTION cols_verify_defvalue( typenum, typel1, typel2, typenn, defvalue )
   DEFINE typenum, typel1, typel2, typenn INTEGER
   DEFINE defvalue STRING
+  LET typenn = NULL
   CASE
      WHEN typenum == dtn_serial
-          RETURN LENGTH(defvalue) == 0
+          RETURN length(defvalue) == 0
      WHEN typenum == dtn_bigserial
-          RETURN LENGTH(defvalue) == 0
+          RETURN length(defvalue) == 0
      WHEN typenum == dtn_serial8
-          RETURN LENGTH(defvalue) == 0
+          RETURN length(defvalue) == 0
      WHEN typenum == dtn_boolean
           RETURN (defvalue=="TRUE" || defvalue=="FALSE")
      WHEN typenum == dtn_smallint

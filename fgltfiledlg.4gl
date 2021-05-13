@@ -62,7 +62,7 @@ PUBLIC FUNCTION fglt_file_opendlg(title,defaultpath,defaultfile,typelist,options
   DEFINE t, fn STRING
   IF defaultpath IS NULL THEN
      IF last_opendlg_directory IS NULL THEN
-        LET last_opendlg_directory = os.Path.homedir()
+        LET last_opendlg_directory = os.Path.homeDir()
      END IF
      LET defaultpath = last_opendlg_directory
   END IF
@@ -77,7 +77,7 @@ PUBLIC FUNCTION fglt_file_opendlg(title,defaultpath,defaultfile,typelist,options
   END IF
   LET fn = __file_pathdlg("open",t,defaultpath,defaultfile,typelist,options)
   IF fn IS NOT NULL THEN
-     LET last_opendlg_directory = os.Path.dirname(fn)
+     LET last_opendlg_directory = os.Path.dirName(fn)
   END IF
   RETURN fn
 END FUNCTION
@@ -108,7 +108,7 @@ PUBLIC FUNCTION fglt_file_savedlg(title,defaultpath,defaultfile,typelist,options
 
   IF defaultpath IS NULL THEN
      IF last_savedlg_directory IS NULL THEN
-        LET last_savedlg_directory = os.Path.homedir()
+        LET last_savedlg_directory = os.Path.homeDir()
      END IF
      LET defaultpath = last_savedlg_directory
   END IF
@@ -119,7 +119,7 @@ PUBLIC FUNCTION fglt_file_savedlg(title,defaultpath,defaultfile,typelist,options
   END IF
   LET fn = __file_pathdlg("save",t,defaultpath,defaultfile,typelist,options)
   IF fn IS NOT NULL THEN
-     LET last_savedlg_directory = os.Path.dirname(fn)
+     LET last_savedlg_directory = os.Path.dirName(fn)
   END IF
   RETURN fn
 END FUNCTION
@@ -127,7 +127,7 @@ END FUNCTION
 --------------------------------------------------------------------------------
 
 PRIVATE FUNCTION __file_pathdlg_setup(d,dlgtype,currpath,filename,typelist,options)
-  DEFINE d ui.DIALOG
+  DEFINE d ui.Dialog
   DEFINE dlgtype, currpath, filename, typelist, options STRING
   DEFINE cr, isFolder, isValid, isFile INTEGER
   DEFINE filepath STRING
@@ -382,7 +382,7 @@ PRIVATE FUNCTION __file_pathdlg(dlgtype,title,defaultpath,defaultfile,typelist,o
        LET cr = DIALOG.getCurrentRow("sr2")
        IF filelist[cr].eimage = "folder" THEN
           IF filelist[cr].entry = ".." THEN
-             LET currpath = os.Path.dirname(currpath)
+             LET currpath = os.Path.dirName(currpath)
           ELSE
              LET currpath = os.Path.join(currpath,filelist[cr].entry)
           END IF
@@ -468,10 +468,10 @@ PRIVATE FUNCTION __file_dirWithChildren(dirpath)
   DEFINE dh INTEGER
   DEFINE found BOOLEAN
   DEFINE fname, pname STRING
-  LET dh = os.Path.diropen(dirpath)
+  LET dh = os.Path.dirOpen(dirpath)
   LET found = FALSE
   WHILE TRUE
-      LET fname = os.Path.dirnext(dh)
+      LET fname = os.Path.dirNext(dh)
       IF fname IS NULL THEN EXIT WHILE END IF
       IF fname == "." OR fname == ".." THEN
          CONTINUE WHILE
@@ -482,7 +482,7 @@ PRIVATE FUNCTION __file_dirWithChildren(dirpath)
          EXIT WHILE
       END IF
   END WHILE
-  CALL os.Path.dirclose(dh)
+  CALL os.Path.dirClose(dh)
   RETURN found
 END FUNCTION
 
@@ -497,13 +497,13 @@ PRIVATE FUNCTION __file_initdirs(dirpath)
      RETURN -2
   END IF
   IF os.Path.type(path) != "directory" THEN
-     LET path = os.Path.dirname(path)
+     LET path = os.Path.dirName(path)
   END IF
   WHILE path IS NOT NULL
     CALL arr.insertElement(1)
     LET arr[1] = path
-    LET path = os.Path.dirname(path)
-    IF path = os.Path.dirname(path) THEN EXIT WHILE END IF
+    LET path = os.Path.dirName(path)
+    IF path = os.Path.dirName(path) THEN EXIT WHILE END IF
   END WHILE
   CALL dirlist.clear()
   LET path = arr[1]
@@ -511,7 +511,7 @@ PRIVATE FUNCTION __file_initdirs(dirpath)
   IF fgl_getenv("WINDIR") THEN
      LET dirlist[1].name = path
   ELSE
-     LET dirlist[1].name = os.Path.basename(path)
+     LET dirlist[1].name = os.Path.baseName(path)
   END IF
   LET dirlist[1].parent = NULL
   LET dirlist[1].abspath = path
@@ -535,11 +535,11 @@ PRIVATE FUNCTION __file_getdirs(index)
   DEFINE dirpath, fname, pname STRING
   IF index<=0 OR dirlist.getLength()==0 THEN RETURN -2 END IF
   LET dirpath = dirlist[index].abspath
-  LET dh = os.Path.diropen(dirpath)
+  LET dh = os.Path.dirOpen(dirpath)
   IF dh == 0 THEN RETURN -1 END IF
   LET cnt = 0
   WHILE TRUE
-      LET fname = os.Path.dirnext(dh)
+      LET fname = os.Path.dirNext(dh)
       IF fname IS NULL THEN EXIT WHILE END IF
       -- Skip current dir (.), parent dir (..), hidden files (.xx)
       IF fname.subString(1,1) == "." THEN
@@ -563,7 +563,7 @@ PRIVATE FUNCTION __file_getdirs(index)
       LET dirlist[pos].children = __file_dirWithChildren(pname)
       LET dirlist[pos].expanded = FALSE
   END WHILE
-  CALL os.Path.dirclose(dh)
+  CALL os.Path.dirClose(dh)
   RETURN cnt
 END FUNCTION
 
@@ -584,11 +584,11 @@ PRIVATE FUNCTION __file_getfiles(dirpath,typelist,showhidden)
   DEFINE dh, ns INTEGER
   DEFINE fname, pname, size, type, image, ext STRING
   CALL filelist.clear()
-  CALL os.Path.dirsort("extension",1) --too slow? by type it's very slow.
-  LET dh = os.Path.diropen(dirpath)
+  CALL os.Path.dirSort("extension",1) --too slow? by type it's very slow.
+  LET dh = os.Path.dirOpen(dirpath)
   IF dh == 0 THEN RETURN -1 END IF
   WHILE TRUE
-      LET fname = os.Path.dirnext(dh)
+      LET fname = os.Path.dirNext(dh)
       IF fname IS NULL THEN EXIT WHILE END IF
       LET pname = os.Path.join(dirpath, fname)
       IF fname == "." THEN
@@ -642,14 +642,14 @@ PRIVATE FUNCTION __file_getfiles(dirpath,typelist,showhidden)
       LET filelist[filelist.getLength()].esize = size
       LET filelist[filelist.getLength()].emodt = os.Path.mtime(pname)
   END WHILE
-  CALL os.Path.dirclose(dh)
+  CALL os.Path.dirClose(dh)
   RETURN filelist.getLength()
 END FUNCTION
 
 PRIVATE FUNCTION __file_checktypeandext(typelist,fname)
   DEFINE typelist, fname STRING
   DEFINE e STRING
-  IF os.Path.basename(fname)==".." THEN
+  IF os.Path.baseName(fname)==".." THEN
      RETURN FALSE
   END IF
   IF __file_intypelist(typelist,"*") THEN
