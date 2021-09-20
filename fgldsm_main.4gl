@@ -8,7 +8,7 @@ GLOBALS "fgldsm_globals.4gl"
 
 CONSTANT toolname      = "fglschmg"
 CONSTANT tooltitle     = "Database Schema Manager"
-CONSTANT toolversion   = "1.1"
+CONSTANT toolversion   = "1.2"
 
 DEFINE curschema STRING -- path to .dbs schema header file
 DEFINE curtable INTEGER
