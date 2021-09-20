@@ -30,15 +30,9 @@ TOPMENU
     COMMAND load
     COMMAND save
     COMMAND saveas
+    COMMAND edit_options
     SEPARATOR
     COMMAND close
-  END
-  GROUP edit (TEXT="Edit")
-    COMMAND editcut
-    COMMAND editcopy
-    COMMAND editpaste
-    SEPARATOR
-    COMMAND edit_options
   END
   GROUP schema (TEXT="Schema")
     COMMAND extract_sql(TEXT="Extract database schema")
@@ -66,27 +60,16 @@ TOPMENU
   END
 END
 
-toolbar ( buttonTextHidden )
-  ITEM close
-  SEPARATOR
+TOOLBAR ( BUTTONTEXTHIDDEN )
   ITEM load
   ITEM save
-  SEPARATOR
-  ITEM editcut
-  ITEM editcopy
-  ITEM editpaste
-  SEPARATOR
-  ITEM edit_options
-  SEPARATOR
-  ITEM extract_sql
   ITEM edit_hprms
-  ITEM create_sql
   SEPARATOR
-  ITEM select_table
   ITEM first_table
   ITEM prev_table
   ITEM next_table
   ITEM last_table
+  ITEM select_table
   ITEM new_table
   ITEM copy_table
   ITEM delete_table
@@ -200,8 +183,8 @@ END -- layout
 ATTRIBUTES
 EDIT tb = FORMONLY.tabname, SCROLL, COLOR=BLUE, NOT NULL, REQUIRED,
   COMMENT="Name of database table";
-BUTTONEDIT pkey = FORMONLY.pkeyname, SCROLL, ACTION=pkn_default, IMAGE="prop",
-  COMMENT="Name of the primary key constraint (click button to get a default name)";
+EDIT pkey = FORMONLY.pkeyname, SCROLL,
+  COMMENT="Name of the primary key constraint";
 
 LABEL sn     = FORMONLY.curschema, SIZEPOLICY = DYNAMIC;
 
@@ -216,11 +199,10 @@ BUTTON c_mdw: sa_cols.move_down, IMAGE="arrdown",
   COMMENT="Move column down in list and change its position in table definition";
 LABEL i = FORMONLY.colindex, COLOR=RED,
   TITLE="Pos";
-BUTTONEDIT cn = FORMONLY.colname, COLOR=BLUE,
+EDIT cn = FORMONLY.colname, COLOR=BLUE,
   TITLE="Column name",
   UNHIDABLE, NOT NULL, REQUIRED, SCROLL,
-  ACTION=cn_default, IMAGE="prop",
-  COMMENT="Name of the table column (click button to get a default name)";
+  COMMENT="Name of the table column";
 COMBOBOX ct = FORMONLY.typenum,
   TITLE="Data type",
   UNHIDABLE, NOT NULL, REQUIRED,
@@ -253,11 +235,10 @@ BUTTON s_add: sa_skeys.append;
 BUTTON s_ins: sa_skeys.insert;
 BUTTON s_del: sa_skeys.delete;
 
-BUTTONEDIT sk = FORMONLY.skeyname, COLOR = BLUE,
+EDIT sk = FORMONLY.skeyname, COLOR = BLUE,
   TITLE = "Constraint name",
   NOT NULL, REQUIRED, SCROLL,
-  ACTION = skn_default, IMAGE = "prop",
-  COMMENT="Secondary key name (click button to get a default name)";
+  COMMENT="Secondary key name";
 BUTTONEDIT skcols = FORMONLY.skeycols, TITLE = "Columns",
   NOT NULL, REQUIRED, SCROLL,
   ACTION = skeys_edit_colset, IMAGE = "pen",
@@ -269,11 +250,10 @@ BUTTON f_add: sa_fkeys.append;
 BUTTON f_ins: sa_fkeys.insert;
 BUTTON f_del: sa_fkeys.delete;
 
-BUTTONEDIT fk = FORMONLY.fkeyname, COLOR = BLUE,
+EDIT fk = FORMONLY.fkeyname, COLOR = BLUE,
   TITLE = "Constraint name",
-  ACTION=fkn_default, IMAGE="prop",
   NOT NULL, REQUIRED, SCROLL,
-  COMMENT="Foreign key name (click button to get a default name)";
+  COMMENT="Foreign key name";
 BUTTONEDIT fkmc = FORMONLY.fkeycols,
   TITLE = "Column list",
   NOT NULL, REQUIRED, SCROLL,
@@ -304,11 +284,10 @@ BUTTON k_add: sa_checks.append;
 BUTTON k_ins: sa_checks.insert;
 BUTTON k_del: sa_checks.delete;
 
-BUTTONEDIT ck = FORMONLY.checkname, COLOR = BLUE,
+EDIT ck = FORMONLY.checkname, COLOR = BLUE,
   TITLE = "Constraint name",
   NOT NULL, REQUIRED, SCROLL,
-  ACTION=ckn_default, IMAGE="prop",
-  COMMENT="Check constraint name (click button to get a default name)";
+  COMMENT="Check constraint name";
 EDIT ckcond = FORMONLY.sqlcond,
   TITLE = "SQL Condition",
   NOT NULL, REQUIRED, SCROLL,

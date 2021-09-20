@@ -1120,17 +1120,6 @@ LABEL sqltext_check:
       ON ACTION extract_sql
          IF NOT tabdef_extract(DIALOG) THEN EXIT DIALOG END IF
 
-      ON ACTION pkn_default
-         LET pkeyname = constraint_get_unique_name(constype_pkey,curtable)
-         CALL DIALOG.setFieldTouched("pkeyname", TRUE)
-         CALL tabdef_touch_setup(DIALOG)
-
-      ON ACTION cn_default
-         LET prow = DIALOG.getCurrentRow("sa_cols")
-         LET columns[prow].colname = cols_get_newname(curtable, prow)
-         CALL DIALOG.setFieldTouched("colname", TRUE)
-         CALL tabdef_touch_setup(DIALOG)
-
       ON ACTION dialogtouched
          CALL tabdef_touch_setup(DIALOG)
 
@@ -1145,12 +1134,6 @@ LABEL sqltext_check:
       ON ACTION topts_delete
          LET prow = DIALOG.getCurrentRow("sa_topts")
          CALL DIALOG.deleteRow("sa_topts", prow)
-         CALL tabdef_touch_setup(DIALOG)
-
-      ON ACTION skn_default
-         LET prow = DIALOG.getCurrentRow("sa_skeys")
-         LET skeys[prow].skeyname = constraint_get_unique_name(constype_skey,curtable)
-         CALL DIALOG.setFieldTouched("skeyname", TRUE)
          CALL tabdef_touch_setup(DIALOG)
 
       ON ACTION skeys_edit_colset
@@ -1183,18 +1166,6 @@ LABEL sqltext_check:
          LET prow = DIALOG.getCurrentRow("sa_fkeys")
          LET fkeys[prow].fkeycols = colset_edit(curtable,fkeys[prow].fkeycols)
          CALL DIALOG.setFieldTouched("fkeycols", TRUE)
-         CALL tabdef_touch_setup(DIALOG)
-
-      ON ACTION fkn_default
-         LET prow = DIALOG.getCurrentRow("sa_fkeys")
-         LET fkeys[prow].fkeyname = constraint_get_unique_name(constype_fkey,curtable)
-         CALL DIALOG.setFieldTouched("fkeyname", TRUE)
-         CALL tabdef_touch_setup(DIALOG)
-
-      ON ACTION ckn_default
-         LET prow = DIALOG.getCurrentRow("sa_checks")
-         LET checks[prow].checkname = constraint_get_unique_name(constype_chck,curtable)
-         CALL DIALOG.setFieldTouched("checkname", TRUE)
          CALL tabdef_touch_setup(DIALOG)
 
   END DIALOG
