@@ -1,8 +1,6 @@
 IMPORT os
 IMPORT FGL fgldbslib
 IMPORT FGL fgltbasics
-IMPORT FGL fgltdialogs
-#IMPORT FGL fgltfiledlg
 
 -- FIXME: Generate serial emulation objects according to the emulation type.
 
