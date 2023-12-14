@@ -2,7 +2,7 @@
 
 ## Description
 
-This tool is a database schema definition program (.dbs files)
+This Genero tool is a database schema definition program (.dbs files)
 You can import schemas from existing databases, manage tables, columns,
 contraints, indexes, and produce SQL scripts for different type of
 databases servers.
