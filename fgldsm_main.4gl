@@ -1625,6 +1625,7 @@ END FUNCTION
 
 FUNCTION sql_extract_schema()
   DEFINE r INTEGER
+  DEFINE msg STRING
   OPEN WINDOW w_extract WITH FORM "fgldsm_extract" ATTRIBUTES(STYLE="dialog2")
   WHILE TRUE 
   INPUT BY NAME ext_params.* WITHOUT DEFAULTS ATTRIBUTES(UNBUFFERED, HELP = 106)
@@ -1640,35 +1641,22 @@ FUNCTION sql_extract_schema()
      LET int_flag=FALSE
      RETURN 1
   END IF
-  LET r = schema_extraction()
-  CASE r
-       WHEN 0
-            LET curschema = get_schname_from_dbname(ext_params.dbname)
-            LET hprms.schname = curschema
-            LET hprms.schcreat = CURRENT YEAR TO SECOND
-            LET hprms.schmodif = hprms.schcreat
-            LET hprms.schrevision = 0
-            LET hprms.schquotedids = "y" -- Always...
-            LET hprms.schcomment = "Database source: ", ext_params.dbname
-            CALL __mbox_ok( tooltitle, SFMT("Database schema extracted with success.\n" ||"Found %1 tables in the database.",
-                            tables.getLength()), "information")
-            EXIT WHILE
-       WHEN -1
-            CALL __mbox_ok( tooltitle, "Could not connect to database server", "exclamation")
-            CONTINUE WHILE
-       WHEN -2
-            CALL __mbox_ok( tooltitle, "Could not identify database type", "exclamation")
-            CONTINUE WHILE
-       WHEN -3
-            CALL __mbox_ok( tooltitle, "Database schema extraction interrupted by user", "exclamation")
-            CONTINUE WHILE
-       WHEN -4
-            CALL __mbox_ok( tooltitle, "Schema extraction not yet implemented for this type of database", "exclamation")
-            CONTINUE WHILE
-       OTHERWISE
-            CALL __mbox_ok( tooltitle, "Could not extract database schema", "exclamation")
-            CONTINUE WHILE
-  END CASE
+  CALL schema_extraction() RETURNING r, msg
+  IF r == 0 THEN
+      LET curschema = get_schname_from_dbname(ext_params.dbname)
+      LET hprms.schname = curschema
+      LET hprms.schcreat = CURRENT YEAR TO SECOND
+      LET hprms.schmodif = hprms.schcreat
+      LET hprms.schrevision = 0
+      LET hprms.schquotedids = "y" -- Always...
+      LET hprms.schcomment = "Database source: ", ext_params.dbname
+      CALL __mbox_ok( tooltitle, SFMT("Database schema extracted with success.\n" ||"Found %1 tables in the database.",
+                      tables.getLength()), "information")
+      EXIT WHILE
+  ELSE
+      CALL __mbox_ok( tooltitle, msg, "exclamation")
+      CONTINUE WHILE
+  END IF
   END WHILE
   CLOSE WINDOW w_extract
   RETURN r

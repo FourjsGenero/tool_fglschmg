@@ -57,7 +57,7 @@ CHECKBOX st   = FORMONLY.systables,
 CHECKBOX ie   = FORMONLY.ignerrors,
                 NOT NULL, REQUIRED,
                 TEXT="Ignore errors";
-LABEL info    = FORMONLY.info;
+LABEL info    = FORMONLY.info, SIZEPOLICY=FIXED;
 BUTTON b_ok    : accept;
 BUTTON b_cancel: cancel;
 BUTTON b_inter : interrupt, TEXT="Interrupt";

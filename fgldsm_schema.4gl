@@ -39,6 +39,7 @@ END FUNCTION
 
 FUNCTION schema_extraction()
   DEFINE r,x INTEGER
+  DEFINE msg STRING
 
   CALL fglt_log_open()
   CALL fglt_log_write("Database schema extraction")
@@ -59,7 +60,8 @@ FUNCTION schema_extraction()
   -- extract constraints and other table properties....
   IF length(ext_params.dbowner) == 0 THEN
      CALL fglt_log_write("")
-     CALL fglt_log_write("ERROR: Must provide db owner to extract table information...")
+     LET msg = "ERROR: Must provide db owner to extract table information..."
+     CALL fglt_log_write(msg)
      LET r=-1
      GOTO ext_end
   END IF
@@ -88,12 +90,16 @@ FUNCTION schema_extraction()
   LET r = fgldbsch_connect()
   IF r<0 THEN
      CALL fgldbsch_fini()
+     LET msg = "ERROR: Could not connect to database server"
+     CALL fglt_log_write(msg)
      LET r=-2
      GOTO ext_end
   END IF
 
   LET sql_params.dbtype = fgldbsch_get_db_type()
   IF sql_params.dbtype IS NULL THEN
+     LET msg = "ERROR: Could not identify database type"
+     CALL fglt_log_write(msg)
      LET r=-3
      GOTO ext_end
   END IF
@@ -106,8 +112,8 @@ FUNCTION schema_extraction()
   IF fgldbsch_extract() < 0 THEN
      LET r = fgldbsch_disconnect()
      CALL fgldbsch_fini()
-     CALL fglt_log_write("ERROR: fgldbsch_extract() call failed.")
-     CALL fglt_log_write("")
+     LET msg = "ERROR: fgldbsch_extract() call failed"
+     CALL fglt_log_write(msg)
      LET r=-4
      GOTO ext_end
   END IF
@@ -134,6 +140,8 @@ FUNCTION schema_extraction()
   CALL fglt_log_write("")
   LET r = extract_check_unique_names()
   IF r<0 THEN
+     LET msg = "ERROR: duplicate constraint names"
+     CALL fglt_log_write(msg)
      GOTO ext_end
   END IF
 
@@ -149,7 +157,7 @@ LABEL ext_end:
   CALL fglt_log_save("dbextract.log")
   CALL fglt_log_close()
 
-  RETURN r
+  RETURN r, msg
 
 END FUNCTION
 
