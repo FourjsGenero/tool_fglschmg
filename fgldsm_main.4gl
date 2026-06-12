@@ -58,7 +58,6 @@ MAIN
   OPTIONS HELP FILE "fgldsm_help.iem"
 
   CALL addCommonStyles()
-  CALL addStyleList1()
 
   OPTIONS INPUT WRAP
   CLOSE WINDOW screen
@@ -2181,41 +2180,3 @@ FUNCTION addCommonStyles()
     CALL a.setAttribute("name", "backgroundColor")
     CALL a.setAttribute("value", "yellow")
 END FUNCTION
-
-FUNCTION addStyleList1()
-    DEFINE r, sl, s, a om.DomNode
-    DEFINE nl om.NodeList
-    LET r = ui.Interface.getRootNode()
-    LET nl = r.selectByTagName("StyleList")
-    LET sl = nl.item(1)
-
-    LET s = sl.createChild("Style")
-    CALL s.setAttribute("name", "Table.list1:odd")
-    CALL sl.appendChild(s)
-    LET a = s.createChild("StyleAttribute")
-    CALL s.appendChild(a)
-    CALL a.setAttribute("name", "backgroundColor")
-    CALL a.setAttribute("value", "#FFFFDD")
-
-    LET s = sl.createChild("Style")
-    CALL s.setAttribute("name", "Table.list1:even")
-    CALL sl.appendChild(s)
-    LET a = s.createChild("StyleAttribute")
-    CALL s.appendChild(a)
-    CALL a.setAttribute("name", "backgroundColor")
-    CALL a.setAttribute("value", "#EEFFFF")
-
-    LET s = sl.createChild("Style")
-    CALL s.setAttribute("name", "Table.list1")
-    CALL sl.appendChild(s)
-    LET a = s.createChild("StyleAttribute")
-    CALL s.appendChild(a)
-    CALL a.setAttribute("name", "highlightCurrentRow")
-    CALL a.setAttribute("value", "1")
-    LET a = s.createChild("StyleAttribute")
-    CALL s.appendChild(a)
-    CALL a.setAttribute("name", "highlightColor")
-    CALL a.setAttribute("value", "lightGray")
-
-END FUNCTION
-
