@@ -871,7 +871,7 @@ END FUNCTION
 
 FUNCTION tabdef_edit(_saved)
   DEFINE _saved INTEGER
-  DEFINE prow, s INTEGER
+  DEFINE prow, s, x INTEGER
   DEFINE tn, tmp STRING
 
   LET tabdef_saved = _saved
@@ -932,10 +932,12 @@ FUNCTION tabdef_edit(_saved)
 
       INPUT ARRAY skeys FROM sa_skeys.* ATTRIBUTES(WITHOUT DEFAULTS, AUTO APPEND=FALSE, HELP=102)
        BEFORE INSERT
-         LET skeys[arr_curr()].skeyname = constraint_get_unique_name(constype_skey,curtable)
+         LET x = arr_curr()
+         LET skeys[x].skeyname = constraint_get_unique_name(constype_skey,curtable)
          CALL tabdef_touch_setup(DIALOG)
        BEFORE ROW
-         CALL dialog.setActionActive("skeys_edit_colset",(arr_curr()>0))
+         LET x = arr_curr()
+         CALL dialog.setActionActive("skeys_edit_colset",(x>0))
        AFTER DELETE
          CALL tabdef_touch_setup(DIALOG)
        AFTER FIELD skeyname
@@ -953,9 +955,10 @@ FUNCTION tabdef_edit(_saved)
          CALL dialog.setActionActive("fkeys_edit_colset",(arr_curr()>0))
          CALL dialog.setActionActive("zoom_refkey", fkeys[arr_curr()].reftabname IS NOT NULL )
        BEFORE INSERT
-         LET fkeys[arr_curr()].fkeyname = constraint_get_unique_name(constype_fkey,curtable)
-         LET fkeys[arr_curr()].delrule = udrule_restrict
-         LET fkeys[arr_curr()].updrule = udrule_restrict
+         LET x = arr_curr()
+         LET fkeys[x].fkeyname = constraint_get_unique_name(constype_fkey,curtable)
+         LET fkeys[x].delrule = udrule_restrict
+         LET fkeys[x].updrule = udrule_restrict
          CALL tabdef_touch_setup(DIALOG)
        AFTER DELETE
          CALL tabdef_touch_setup(DIALOG)
@@ -1843,7 +1846,7 @@ FUNCTION skeys_verify_column_usage(d)
   END FOR
   FOR i=1 TO skeys.getLength()
       FOR j=1 TO fkeys.getLength()
-          IF fkeys[i].fkeycols == skeys[j].skeycols THEN
+          IF fkeys[j].fkeycols == skeys[i].skeycols THEN
              CALL __mbox_ok(fkeys_msgtitle, "Identical column list already used by foreign key of this table", "stop")
              RETURN FALSE
           END IF
